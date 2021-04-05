@@ -12,6 +12,9 @@ const  User = require('../models/user-schema')
 const  Product = require('../models/product-schema');
 const HttpError = require('../middleware/http-error');
 
+const { v1: uuid } = require('uuid')
+
+
 //user signup
 
 const createUser = async (req, res, next) => {
@@ -230,6 +233,7 @@ catch(err){
 const createProduct = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+
       return next(
         new HttpError('Invalid inputs passed, please check your data.', 422)
       );
@@ -244,7 +248,9 @@ const createProduct = async (req, res, next) => {
       description,
       modelNumber,
       category,
-      creator
+      image : req.file.path ,
+      creator,
+      productid : uuid() 
     });
   
     let user;
@@ -287,12 +293,15 @@ const createProduct = async (req, res, next) => {
   //get products by creatorId(objectId of user)
 
   const getProductsByUserId = async (req, res, next) => {
-    const userId = req.params.uid;
+    const creator = req.params.uid;
+
+    // replace add userId login after auth protect 
+   // const creator = req.body;
   
     // let Products;
     let userWithProducts;
     try {
-      userWithProducts = await User.findById(userId).populate('places');
+      userWithProducts = await User.findById(creator).populate('inventory');
     } catch (err) {
       const error = new HttpError(
         'Fetching places failed, please try again later',
@@ -301,20 +310,47 @@ const createProduct = async (req, res, next) => {
       return next(error);
     }
   
-    // if (!places || places.length === 0) {
-    if (!userWithPlaces || userWithPlaces.places.length === 0) {
+    // if (!products || products.length === 0) {
+    if (!userWithProducts || userWithProducts.inventory.length === 0) {
       return next(
-        new HttpError('Could not find places for the provided user id.', 404)
+        new HttpError('Could not find products for the provided user id.', 404)
       );
     }
   
     res.json({
-      places: userWithPlaces.places.map(place =>
-        place.toObject({ getters: true })
+      inventory: userWithProducts.inventory.map(product =>
+        product.toObject({ getters: true })
       )
     });
   };
   
+//get product by id
+
+const getProductById = async (req, res, next) => {
+    const productId = req.params.pid;
+  
+    let product;
+    try {
+        product  = await Product.findById(productId);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not find a product.',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!product) {
+      const error = new HttpError(
+        'Could not find a place for the provided id.',
+        404
+      );
+      return next(error);
+    }
+  
+    res.json({ product : product .toObject({ getters: true }) });
+  };
+
 
 //user signup
 exports.createUser =  createUser;
@@ -324,3 +360,7 @@ exports.userLogin =  userLogin;
 exports.updateUserPassword = updateUserPassword;
 //post product
 exports.createProduct = createProduct;
+//get products by creator id
+exports.getProductsByUserId = getProductsByUserId;
+//get product by product id
+exports.getProductById = getProductById;

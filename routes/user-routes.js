@@ -4,6 +4,7 @@ const { check } = require('express-validator')
 const router = express.Router();
 
 const userController = require('../controllers/user-controller')
+const fileUpload = require('../middleware/file-upload');
 
 
 router.get('/', (req, res, next) => {
@@ -30,13 +31,14 @@ router.post('/login' ,[ check('email').isEmail(), check('password').not().isEmpt
 router.post('/updatePassword'  ,[ check('email').isEmail(), check('oldpassword').not().isEmpty(),check('newpassword').not().isEmpty()], userController.updateUserPassword);
 
 //post product
-router.post('/postItem',[ check('title').not().isEmpty(),
-check('description').not().isEmpty(),
-check('modelNumber').not().isEmpty(),
-check('category').not().isEmpty()
-],
+router.post('/postItem',fileUpload.single('image'),
 userController.createProduct);
 
+//getproductsby id
+router.get('/id/:uid', userController.getProductsByUserId);
+
+//getproductsby id
+router.get('/product/:pid', userController.getProductById);
 
 
 module.exports = router;
