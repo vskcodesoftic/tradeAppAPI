@@ -3,17 +3,23 @@ require("dotenv").config()
 const express = require('express');
 
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose')
-const HttpError = require('./middleware/http-error')
+const mongoose = require('mongoose');
+const HttpError = require('./middleware/http-error');
 
-const homepageRoutes = require('./routes/home-routes')
+const homepageRoutes = require('./routes/home-routes');
 
+const userPageRoutes = require('./routes/user-routes');
 
 const app = express();
 
 //body parsing jsonData
 app.use(bodyParser.json())
 //routes
+
+
+//customer Routes
+app.use('/api/customer/',userPageRoutes);
+
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,6 +36,11 @@ app.use((req, res, next) => {
 
 app.use(homepageRoutes);
 
+// //Admin Routes
+// app.use('/api/admin/', merchantPageRoutes);
+
+//user Routes
+app.use('/api/user/',userPageRoutes);
 
 app.use((req, res, next)=>{
     const error = new HttpError('could not found this Route', 404);
