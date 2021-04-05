@@ -342,7 +342,7 @@ const getProductById = async (req, res, next) => {
   
     if (!product) {
       const error = new HttpError(
-        'Could not find a place for the provided id.',
+        'Could not find a product for the provided id.',
         404
       );
       return next(error);

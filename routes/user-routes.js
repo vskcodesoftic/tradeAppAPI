@@ -34,11 +34,4 @@ router.post('/updatePassword'  ,[ check('email').isEmail(), check('oldpassword')
 router.post('/postItem',fileUpload.single('image'),
 userController.createProduct);
 
-//getproductsby id
-router.get('/id/:uid', userController.getProductsByUserId);
-
-//getproductsby id
-router.get('/product/:pid', userController.getProductById);
-
-
 module.exports = router;

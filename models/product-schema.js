@@ -8,10 +8,8 @@ const productSchema = new Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     image : { type :String },
-    modelNumber : { type : String },
     category : {type : String , required : true},
-    made : { type : String},
-    year : { type : String},
+    subcategory : { type : String },
     productid :{ type: String},
    
 
