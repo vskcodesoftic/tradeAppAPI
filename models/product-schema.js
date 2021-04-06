@@ -11,6 +11,8 @@ const productSchema = new Schema({
     category : {type : String , required : true},
     subcategory : { type : String },
     productid :{ type: String},
+    isFeatured : {type : Boolean, default: false },
+    isShow : {type : Boolean, default : false },
    
 
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}

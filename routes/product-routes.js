@@ -10,7 +10,14 @@ router.get('/', (req, res, next) => {
   res.json({message: 'productPage routes'});
 });
 
+ //get list of products
+ router.get('/list', productController.getProductsList);
 
+ //get feautered  of products
+ router.get('/featuredproducts', productController.getFeaturedProductsList);
+
+ //get productslist by  category
+ router.get('/category/:cid', productController.getProductsListbyCategory);
 
 //getproductsby id
 router.get('/:uid', productController.getProductsByUserId);
@@ -29,7 +36,8 @@ router.patch(
     productController.updateProduct
   );
 
-
+//delete product by id
   router.delete('/:pid', productController.deleteProduct);
+
 
 module.exports = router;

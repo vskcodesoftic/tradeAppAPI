@@ -11,6 +11,57 @@ const { v1: uuid } = require('uuid')
 
 
 
+//get list of products 
+const getProductsList = async (req, res, next) => {
+  let products
+  try{
+      products = await Product.find()
+  }
+  catch(err){
+      const error = new HttpError("can not fetch products complete request",500)
+      return next(error)
+  }
+  res.json({ products : products.map( product => product.toObject({ getters : true}))})
+  
+}
+
+//get list of  products by category
+const getProductsListbyCategory = async (req, res, next) => {
+  let getCategory = req.params.cid;
+  let products
+  try{
+      products = await Product.find({ category : getCategory })
+      if (!products || products.length === 0) {
+        return next(
+          new HttpError('there are no products with this category', 404)
+        );
+      }
+    
+  }
+  catch(err){
+      const error = new HttpError("can not fetch products by provided category, something went wrong",500)
+      return next(error)
+  }
+  
+  res.json({ products : products.map( product => product.toObject({ getters : true}))})
+  
+}
+
+//get list of featured products 
+const getFeaturedProductsList = async (req, res, next) => {
+  let products
+  try{
+      products = await Product.find({ isFeatured : "false" })
+  }
+  catch(err){
+      const error = new HttpError("can not fetch products complete request",500)
+      return next(error)
+  }
+  res.json({ products : products.map( product => product.toObject({ getters : true}))})
+  
+}
+
+
   //get products by creatorId(objectId of user)
 
   const getProductsByUserId = async (req, res, next) => {
@@ -114,41 +165,23 @@ const getProductById = async (req, res, next) => {
 //delete product by id
 const deleteProduct = async (req, res, next) => {
     const productId = req.params.pid;
-  
-    let product;
-    try {
-      product = await Product.findById(productId).populate('inventory');
-    } catch (err) {
-      const error = new HttpError(
-        'Something went wrong, could not deglete product.',
-        500
-      );
-      return next(error);
-    }
-  
-    if (!product) {
-      const error = new HttpError('Could not find product for this id.', 404);
-      return next(error);
-    }
-  
-    try {
-        const sess = await mongoose.startSession();
-        sess.startTransaction();
-        await product.remove({ session: sess });
-        product.creator.inventory.pull(product);
-        await product.creator.save({ session: sess });
-        await sess.commitTransaction();
-    } catch (err) {
-        console.log(err)
-      const error = new HttpError(
-        'Something went wrong, could not delete product.',
-        500
-      );
-      return next(error);
-    }
-  
-    res.status(200).json({ message: 'Deleted product.' });
+    Product.findByIdAndRemove(productId)
+    .then((result) => {
+      res.json({
+        success: true,
+        msg: `product has been deleted.`,
+        result: {
+          _id: result._id,
+          title: result.title,
+        }
+      });
+    })
+    .catch((err) => {
+      res.status(404).json({ success: false, msg: 'Nothing to delete with provided id.' });
+    });
+
   };
+  
   
 
 
@@ -160,4 +193,10 @@ exports.getProductById = getProductById;
 exports.updateProduct = updateProduct;
 //deleteProductById
 exports.deleteProduct = deleteProduct;
+//get list of products
+exports.getProductsList = getProductsList;
+//get list of feautered  products
+exports.getFeaturedProductsList = getFeaturedProductsList;
+//get products list  based on  category
+exports.getProductsListbyCategory = getProductsListbyCategory;
 
