@@ -24,7 +24,7 @@ router.get('/:uid', productController.getProductsByUserId);
 
 //getproductsby id
 router.get('/p/:pid', productController.getProductById);
-//updateproduct
+//updateproduct by id
 router.patch(
     '/:pid',
     [

@@ -13,8 +13,11 @@ const userSchema = new Schema({
     expireToken:{ type:Date },
     ip:{ type:String },
     browser:{ type:String },
-    inventory: [{ type: mongoose.Types.ObjectId,  ref: 'Product'}]
-
+    inventory: [{ type: mongoose.Types.ObjectId,  ref: 'Product'}],
+    plans: [{ type: mongoose.Types.ObjectId,  ref: 'Plans'}],
+    isSubscribed : { type: Boolean, default: false },
+    planexpireToken:{ type:Date },
+   
 }, { versionKey: false });
 
 userSchema.plugin(uniqueValidator)

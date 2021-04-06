@@ -162,6 +162,7 @@ const getProductById = async (req, res, next) => {
     res.status(200).json({ product: product.toObject({ getters: true }) });
   };
   
+
 //delete product by id
 const deleteProduct = async (req, res, next) => {
     const productId = req.params.pid;
