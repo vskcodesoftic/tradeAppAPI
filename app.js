@@ -1,6 +1,12 @@
 require("dotenv").config()
 //dotenv for envoirment variables
+
+//ejs
+const ejs = require('ejs');
+
 const express = require('express');
+
+const path = require('path'); 
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
@@ -16,8 +22,14 @@ const productPageRoutes = require('./routes/product-routes');
 
 const planPageRoutes = require('./routes/plans-routes');
 
+const paymentPageRoutes = require('./routes/payment-routes');
+
 
 const app = express();
+
+//ejs
+app.set('view engine', 'ejs');
+
 
 //body parsing jsonData
 app.use(bodyParser.json())
@@ -33,10 +45,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// set public directory to serve static html files 
+app.use('/', express.static(path.join(__dirname, 'public'))); 
 
 
 app.use(homepageRoutes);
-
 
 //customer Routes
 app.use('/api/user/',userPageRoutes);
@@ -50,6 +63,8 @@ app.use('/api/product/',productPageRoutes);
 //plansPage Routes
 app.use('/api/plan/',planPageRoutes);
 
+//payment Routes
+app.use('/api/payment/',paymentPageRoutes);
 
 app.use((req, res, next)=>{
     const error = new HttpError('could not found this Route', 404);

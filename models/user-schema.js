@@ -15,7 +15,9 @@ const userSchema = new Schema({
     browser:{ type:String },
     inventory: [{ type: mongoose.Types.ObjectId,  ref: 'Product'}],
     plans: [{ type: mongoose.Types.ObjectId,  ref: 'Plans'}],
+    payments: [{ type: mongoose.Types.ObjectId,  ref: 'Payment'}],
     isSubscribed : { type: Boolean, default: false },
+    Balance : {type :String , default : "0"},
     planexpireToken:{ type:Date },
    
 }, { versionKey: false });
