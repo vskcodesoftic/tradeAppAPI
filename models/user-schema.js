@@ -17,7 +17,7 @@ const userSchema = new Schema({
     plans: [{ type: mongoose.Types.ObjectId,  ref: 'Plans'}],
     payments: [{ type: mongoose.Types.ObjectId,  ref: 'Payment'}],
     isSubscribed : { type: Boolean, default: false },
-    Balance : {type :String , default : "0"},
+    Balance : {type :Number , default : "0"},
     planexpireToken:{ type:Date },
    
 }, { versionKey: false });

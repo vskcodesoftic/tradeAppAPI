@@ -239,9 +239,9 @@ const createProduct = async (req, res, next) => {
       );
     }
   
-    const { title, description, modelNumber, category, creator } = req.body;
+    const { title, description, modelNumber, category } = req.body;
   
- 
+     const creator = req.userData.userId;
   
     const createdProduct = new Product({
       title,
@@ -268,8 +268,25 @@ const createProduct = async (req, res, next) => {
       return next(error);
     }
   
-    console.log(user);
   
+
+   /// checking balance and decrementing by -1 from balance after posting product 
+   let userBal;
+   try {
+       userBal = await User.findOne({ _id : creator , Balance : { $lte : 0  } })
+     }
+        catch (err) {
+     const error = new HttpError('Balnce checking , please try again', 500);
+     console.log("error ")
+     return next(error);
+   }
+ 
+   if(userBal){
+    const error = new HttpError('purchase plan', 404);
+    return next(error);
+   }
+   
+
     try {
       const sess = await mongoose.startSession();
       sess.startTransaction();
@@ -277,6 +294,11 @@ const createProduct = async (req, res, next) => {
       user.inventory.push(createdProduct);
       await user.save({ session: sess });
       await sess.commitTransaction();
+   
+      await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -1 }});
+
+
+
     } catch (err) {
         console.log(err)
       const error = new HttpError(

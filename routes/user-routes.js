@@ -6,6 +6,7 @@ const router = express.Router();
 const userController = require('../controllers/user-controller')
 const fileUpload = require('../middleware/file-upload');
 
+const checkAuth = require('../middleware/authService');
 
 router.get('/', (req, res, next) => {
  
@@ -31,7 +32,7 @@ router.post('/login' ,[ check('email').isEmail(), check('password').not().isEmpt
 router.post('/updatePassword'  ,[ check('email').isEmail(), check('oldpassword').not().isEmpty(),check('newpassword').not().isEmpty()], userController.updateUserPassword);
 
 //post product
-router.post('/postItem',fileUpload.single('image'),
+router.post('/postItem',checkAuth ,fileUpload.single('image'),
 userController.createProduct);
 
 module.exports = router;
