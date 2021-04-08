@@ -93,9 +93,12 @@ const createPayment = async (req, res, next) => {
    
   };
   
-// post payment 
+// post create basic payment  based on type of plan
 const createBasicPayment = async (req, res, next) => {
   const  { CstFName, CstEmail, CstMobile, ProductTitle } = req.body;
+    
+      const planType = req.params.pid;
+
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -131,7 +134,7 @@ const createBasicPayment = async (req, res, next) => {
      let identifyPrice;
      try{
          
-     identifyPrice  = await Plan.findOneAndUpdate({ type : "basic"});
+     identifyPrice  = await Plan.findOneAndUpdate({ type : planType });
 
      }
      catch(err){
@@ -144,8 +147,30 @@ const createBasicPayment = async (req, res, next) => {
     
     identifiedPrice =  identifyPrice.amount;
 
+           console.log("identified price " + identifiedPrice)
 
-    console.log("identified price "+identifiedPrice)
+         //IdentifyingNo of posts of plan
+         let identifyNumPosts;
+         try{
+             
+         identifyNumPosts  = await Plan.findOneAndUpdate({ type : planType });
+    
+         }
+         catch(err){
+          const error = new HttpError('identifying no of posts failed', 500);
+          console.log("error ")
+          return next(error);
+        }  
+    
+         let identifiedNumOfPosts;
+        
+        identifiedNumOfPosts =  identifyNumPosts.posts;
+       
+        const postId = identifiedNumOfPosts;
+        const cId = creator;
+        
+    console.log("identified posts count "+ identifiedNumOfPosts)
+
        const OrderId = uuid()
         axios.post('https://api.upayments.com/test-payment', {
         merchant_id: process.env.MERCHNAT_ID,
@@ -153,14 +178,14 @@ const createBasicPayment = async (req, res, next) => {
         password : process.env.PASSWORD,
         api_key: process.env.API_KEY,
         order_id: OrderId,
-        total_price:'90',
+        total_price: identifiedPrice,  
         CurrencyCode:'USD',
       //  success_url:process.env.SUCCESS_URL,
         error_url: process.env.ERROR_URL,
         test_mode:'',
         CstFName : "siva",
         CstEmail : "testing@gmail.com",
-        success_url :"http://localhost:8001/api/payment/successUrl"
+        success_url :`http://localhost:8001/api/payment/successUrl/:${postId}/creator/:${cId}`
 
       })
       .then(async (response) =>{
@@ -201,6 +226,10 @@ const createBasicPayment = async (req, res, next) => {
 //successurl
 const successUrl = async (req, res, next) => {
 
+  const postsBalance = req.params.postId;
+  const creatorId = req.params.cId;
+  
+
  var url_parts = url.parse(req.url, true);
 var query = url_parts.query;
 let orderID = query.OrderID;
@@ -214,7 +243,7 @@ let trackId = query.TrackID;
      //  updating details based on order id saving payment and transaction id
      let user;
      try {
-       user = await Payment.findOneAndUpdate({order_id : orderID});
+       user = await Payment.findOneAndUpdate({ order_id : orderID});
      } catch (err) {
        const error = new HttpError(
          'Something went wrong, could not update payment details. orderid saved for reference',
@@ -230,17 +259,20 @@ let trackId = query.TrackID;
      user.PostDate = postDate;
      user.PaymentID = paymentId;
 
+
      try {
       await user.save();
     } catch (err) {
       const error = new HttpError(
-        'Something went wrong, couldnt update details.done ',
+        'Something went wrong, couldnt update details of payment, but payment recived done ',
         500
       );
       return next(error);
     }
-  
-    res.status(200).json({ user: user.toObject({ getters: true }) });
+     
+ 
+
+    res.status(200).json({ user: user.toObject({ getters: true }),  Balance : postsBalance , creatorID : creatorId });
 
 }
 

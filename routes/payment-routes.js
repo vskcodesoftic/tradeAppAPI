@@ -15,18 +15,18 @@ router.get('/', (req, res, next) => {
 // pass checkAuth in production
 
 
-//post product
+//pay simple
 router.post('/pay' ,
 paymentController.createPayment);
 
 
-//post product
+//pay routue based on plan type 
 router.post('/pay/:pid' ,
 paymentController.createBasicPayment);
 
 
 //post payment
-router.get('/successUrl',
+router.get('/successUrl/:postId/creator/:cId',
 paymentController.successUrl);
 
 module.exports = router;
