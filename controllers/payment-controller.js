@@ -93,7 +93,112 @@ const createPayment = async (req, res, next) => {
    
   };
   
-//
+// post payment 
+const createBasicPayment = async (req, res, next) => {
+  const  { CstFName, CstEmail, CstMobile, ProductTitle } = req.body;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+
+      return next(
+        new HttpError('Invalid inputs passed, please check your data.', 422)
+      );
+    }
+  
+   //const creator = req.userData.userId;
+
+    const creator =  "606ab49296e7700f29b6ac5e";
+
+    //temproy for testing after in prodction protect route and pass userId to creator  
+      
+    let user;
+    try {
+        user = await User.findById(creator);
+      }
+         catch (err) {
+      const error = new HttpError('Creating product failedl, please try again', 500);
+      console.log("error ")
+      return next(error);
+    }
+  
+    if (!user) {
+      const error = new HttpError('Could not find user for provided id', 404);
+      return next(error);
+    }
+    
+
+     //IdentifyingPrice of plan
+     let identifyPrice;
+     try{
+         
+     identifyPrice  = await Plan.findOneAndUpdate({ type : "basic"});
+
+     }
+     catch(err){
+      const error = new HttpError('identifying price failed', 500);
+      console.log("error ")
+      return next(error);
+    }  
+
+     let identifiedPrice;
+    
+    identifiedPrice =  identifyPrice.amount;
+
+
+    console.log("identified price "+identifiedPrice)
+       const OrderId = uuid()
+        axios.post('https://api.upayments.com/test-payment', {
+        merchant_id: process.env.MERCHNAT_ID,
+        username: process.env.USERNAME,
+        password : process.env.PASSWORD,
+        api_key: process.env.API_KEY,
+        order_id: OrderId,
+        total_price:'90',
+        CurrencyCode:'USD',
+      //  success_url:process.env.SUCCESS_URL,
+        error_url: process.env.ERROR_URL,
+        test_mode:'',
+        CstFName : "siva",
+        CstEmail : "testing@gmail.com",
+        success_url :"http://localhost:8001/api/payment/successUrl"
+
+      })
+      .then(async (response) =>{
+          console.log(response)
+          const createdPlan = new Payment({
+            order_id : OrderId,
+            total_price : '90',
+            CstFName ,
+            CstEmail,
+            CstMobile,
+            ProductTitle,
+            creator 
+          })
+
+      const url = response.data.paymentURL
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      await createdPlan.save({ session: sess });
+      user.payments.push(createdPlan);
+      await user.save({ session: sess });
+      await sess.commitTransaction();
+      
+      res.redirect(url);
+
+    })
+
+      .catch(function (error) {
+        console.log(error);
+      });
+    
+  
+   
+  };
+  
+
+
+
+//successurl
 const successUrl = async (req, res, next) => {
 
  var url_parts = url.parse(req.url, true);
@@ -141,3 +246,5 @@ let trackId = query.TrackID;
 
   exports.createPayment = createPayment;
   exports.successUrl = successUrl;
+
+  exports.createBasicPayment = createBasicPayment;

@@ -19,6 +19,12 @@ router.get('/', (req, res, next) => {
 router.post('/pay' ,
 paymentController.createPayment);
 
+
+//post product
+router.post('/pay/:pid' ,
+paymentController.createBasicPayment);
+
+
 //post payment
 router.get('/successUrl',
 paymentController.successUrl);

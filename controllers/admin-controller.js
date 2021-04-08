@@ -40,7 +40,7 @@ const createPlan = async (req, res, next) => {
       );
     }
   
-    const { title, description, amount,type, validity } = req.body;
+    const { title, description, amount,type, posts } = req.body;
   
  
   
@@ -48,7 +48,7 @@ const createPlan = async (req, res, next) => {
       title,
       description,
       amount,
-      validity,
+      posts,
       type
     });
   
@@ -78,7 +78,7 @@ const updatePlan = async (req, res, next) => {
       );
     }
   
-    const { title, description  , validity, amount , plantype} = req.body;
+    const { title, description  , posts, amount , plantype} = req.body;
     
    //  const planId = req.params.pid;
     let plan;
@@ -94,7 +94,7 @@ const updatePlan = async (req, res, next) => {
   
     plan.title = title;
     plan.description = description;
-    plan.validity = validity;
+    plan.posts = posts;
     plan.amount = amount;
   
     try {
@@ -175,6 +175,8 @@ const updatePlan = async (req, res, next) => {
   
     res.status(200).json({ product: product.toObject({ getters: true }) });
   };
+  
+
   
   exports.createPlan =createPlan ;
   exports.getPlansList = getPlansList;
