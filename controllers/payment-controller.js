@@ -1,3 +1,4 @@
+var url = require('url');
 
 
 const mongoose = require('mongoose');
@@ -12,6 +13,8 @@ const { v1: uuid } = require('uuid')
 
 // post payment 
 const createPayment = async (req, res, next) => {
+  const  { CstFName, CstEmail, CstMobile, ProductTitle } = req.body;
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
 
@@ -20,12 +23,15 @@ const createPayment = async (req, res, next) => {
       );
     }
   
- 
+   //const creator = req.userData.userId;
+
+    const creator =  "606ab49296e7700f29b6ac5e";
+
     //temproy for testing after in prodction protect route and pass userId to creator  
       
     let user;
     try {
-        user = await User.findById("606ab49296e7700f29b6ac5e");
+        user = await User.findById(creator);
       }
          catch (err) {
       const error = new HttpError('Creating product failedl, please try again', 500);
@@ -37,7 +43,7 @@ const createPayment = async (req, res, next) => {
       const error = new HttpError('Could not find user for provided id', 404);
       return next(error);
     }
-       const  { CstFName, CstEmail, CstMobile, ProductTitle } = req.body;
+    
        const OrderId = uuid()
         axios.post('https://api.upayments.com/test-payment', {
         merchant_id: process.env.MERCHNAT_ID,
@@ -47,11 +53,12 @@ const createPayment = async (req, res, next) => {
         order_id: OrderId,
         total_price:'90',
         CurrencyCode:'USD',
-        success_url:process.env.SUCCESS_URL,
+      //  success_url:process.env.SUCCESS_URL,
         error_url: process.env.ERROR_URL,
         test_mode:'',
         CstFName : "siva",
         CstEmail : "testing@gmail.com",
+        success_url :"http://localhost:8001/api/payment/successUrl"
 
       })
       .then(async (response) =>{
@@ -63,7 +70,7 @@ const createPayment = async (req, res, next) => {
             CstEmail,
             CstMobile,
             ProductTitle,
-            creator:'606ab49296e7700f29b6ac5e' 
+            creator 
           })
 
       const url = response.data.paymentURL
@@ -86,4 +93,51 @@ const createPayment = async (req, res, next) => {
    
   };
   
+//
+const successUrl = async (req, res, next) => {
+
+ var url_parts = url.parse(req.url, true);
+var query = url_parts.query;
+let orderID = query.OrderID;
+let paymentId = query.PaymentID;
+let result = query.Result;
+let postDate = query.PostDate;
+let tranId = query.TranID;
+let ref = query.Ref;
+let trackId = query.TrackID;
+
+     //  updating details based on order id saving payment and transaction id
+     let user;
+     try {
+       user = await Payment.findOneAndUpdate({order_id : orderID});
+     } catch (err) {
+       const error = new HttpError(
+         'Something went wrong, could not update payment details. orderid saved for reference',
+         500
+       );
+       return next(error);
+     }
+   
+     user.Result =  result;
+     user.TrackingId = trackId;
+     user.TranId = tranId;
+     user.Ref = ref;
+     user.PostDate = postDate;
+     user.PaymentID = paymentId;
+
+     try {
+      await user.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, couldnt update details.done ',
+        500
+      );
+      return next(error);
+    }
+  
+    res.status(200).json({ user: user.toObject({ getters: true }) });
+
+}
+
   exports.createPayment = createPayment;
+  exports.successUrl = successUrl;

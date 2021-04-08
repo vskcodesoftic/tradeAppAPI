@@ -32,7 +32,8 @@ router.post('/login' ,[ check('email').isEmail(), check('password').not().isEmpt
 router.post('/updatePassword'  ,[ check('email').isEmail(), check('oldpassword').not().isEmpty(),check('newpassword').not().isEmpty()], userController.updateUserPassword);
 
 //post product
-router.post('/postItem',checkAuth ,fileUpload.single('image'),
+router.post('/postItem', checkAuth ,fileUpload.single('image'),
 userController.createProduct);
+
 
 module.exports = router;

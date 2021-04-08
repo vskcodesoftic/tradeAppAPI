@@ -24,5 +24,6 @@ router.patch('/updatePlan',adminController.updatePlan );
 //delete plan by id
 router.delete('/:pid', adminController.deletePlan);
 
-
+//updateproduct visiblity
+router.patch('/u/:pid', adminController.updateProductVisiblity);
 module.exports = router;

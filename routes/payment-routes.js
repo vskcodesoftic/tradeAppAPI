@@ -1,4 +1,5 @@
 const express = require('express');
+let url = require('url');
 
 const router = express.Router();
 
@@ -10,8 +11,16 @@ router.get('/', (req, res, next) => {
   res.json({message: 'payment routes'});
 });
 
+
+// pass checkAuth in production
+
+
 //post product
-router.post('/pay',
+router.post('/pay' ,
 paymentController.createPayment);
+
+//post payment
+router.get('/successUrl',
+paymentController.successUrl);
 
 module.exports = router;

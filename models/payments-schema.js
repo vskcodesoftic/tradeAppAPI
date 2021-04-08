@@ -10,6 +10,13 @@ const paymentSchema = new Schema({
     CstEmail : { type :String },
     CstMobile : { type :String },
     ProductTitle : { type : String},
+    Result : { type : String , default : "not-captured"},
+    TrackingId :{ type : String},
+    TranId : { type : String },
+    PaymentID : { type : String},
+    Ref : { type : String},
+    PostDate : { type : String},
+
 
 
 

@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 
 const { validationResult } = require('express-validator')
 const  User = require('../models/user-schema')
+const  Product = require('../models/product-schema')
+
 const  Plan = require('../models/plans-schema');
 const HttpError = require('../middleware/http-error');
 
@@ -127,9 +129,55 @@ const updatePlan = async (req, res, next) => {
     });
 
   };
-  
 
+
+  //update product
+  const updateProductVisiblity = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return next(
+        new HttpError('Invalid inputs passed, please check your data.', 422)
+      );
+    }
+    const productId = req.params.pid;
+
+    const { isShow } = req.body;
+  
+    let product;
+    try {
+      product = await Product.updateOne(
+        { productid : productId },
+        {
+          isShow 
+        }
+      );
+
+    } catch (err) {
+      console.log(err)
+      const error = new HttpError(
+        'Something went wrong, could not upda;te product.',
+        500
+      );
+      return next(error);
+    }
+   
+    product.isShow = isShow;
+  
+    try {
+      await product.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not update product.',
+        500
+      );
+      return next(error);
+    }
+  
+    res.status(200).json({ product: product.toObject({ getters: true }) });
+  };
+  
   exports.createPlan =createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;
   exports.deletePlan = deletePlan;
+  exports.updateProductVisiblity = updateProductVisiblity;
