@@ -239,7 +239,7 @@ const createProduct = async (req, res, next) => {
       );
     }
   
-    const { title, description, modelNumber, category } = req.body;
+    const { title, description, modelNumber, category ,isFeatured } = req.body;
   
      const creator = req.userData.userId;
   
@@ -250,6 +250,7 @@ const createProduct = async (req, res, next) => {
       category,
       image : req.file.path ,
       creator,
+      isFeatured,
       productid : uuid() 
     });
   
@@ -286,29 +287,63 @@ const createProduct = async (req, res, next) => {
     return next(error);
    }
    
-
-    try {
-      const sess = await mongoose.startSession();
-      sess.startTransaction();
-      await createdProduct.save({ session: sess });
-      user.inventory.push(createdProduct);
-      await user.save({ session: sess });
-      await sess.commitTransaction();
-   
-      await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -1 }});
-
-
-
-    } catch (err) {
-        console.log(err)
-      const error = new HttpError(
-        'Creating product failed, please try again.',
-        500
-      );
-      return next(error);
-    }
+     //check if userwants to feauture product or not
+        
+      if(isFeatured === "true"){
+       console.log("isFeautured is "+isFeatured)
+       try {
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await createdProduct.save({ session: sess });
+        user.inventory.push(createdProduct);
+        await user.save({ session: sess });
+        await sess.commitTransaction();
+     
+        await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -2, isFeatured : false  } });
   
-    res.status(201).json({ product: createdProduct });
+  
+  
+      } catch (err) {
+          console.log(err)
+        const error = new HttpError(
+          'Creating product failed, please try again.',
+          500
+        );
+        return next(error);
+      }
+    
+      res.status(201).json({ product: createdProduct });
+      }
+      else {
+
+          
+     
+        console.log("isFeautured is "+isFeatured)
+        try {
+          const sess = await mongoose.startSession();
+          sess.startTransaction();
+          await createdProduct.save({ session: sess });
+          user.inventory.push(createdProduct);
+          await user.save({ session: sess });
+          await sess.commitTransaction();
+       
+          await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -1 , isFeatured : true }});
+    
+    
+    
+        } catch (err) {
+            console.log(err)
+          const error = new HttpError(
+            'Creating product failed, please try again.',
+            500
+          );
+          return next(error);
+        }
+      
+        res.status(201).json({ product: createdProduct });
+       }
+  
+   
   };
   
 

@@ -24,6 +24,7 @@ const planPageRoutes = require('./routes/plans-routes');
 
 const paymentPageRoutes = require('./routes/payment-routes');
 
+const tradePageRoutes = require('./routes/trade-routes');
 
 const app = express();
 
@@ -65,6 +66,10 @@ app.use('/api/plan/',planPageRoutes);
 
 //payment Routes
 app.use('/api/payment/',paymentPageRoutes);
+
+//trade routes
+app.use('/api/trade/',tradePageRoutes);
+
 
 app.use((req, res, next)=>{
     const error = new HttpError('could not found this Route', 404);

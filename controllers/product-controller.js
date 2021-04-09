@@ -21,7 +21,7 @@ const getProductsList = async (req, res, next) => {
       const error = new HttpError("can not fetch products complete request",500)
       return next(error)
   }
-  res.json({ products : products.map( product => product.toObject({ getters : true}))})
+  res.json({ products : products.map( product => product.toObject({ getters : true})) })
   
 }
 

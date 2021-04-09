@@ -11,7 +11,7 @@ const productSchema = new Schema({
     category : {type : String , required : true},
     subcategory : { type : String },
     productid :{ type: String},
-    isFeatured : {type : Boolean, default: false },
+    isFeatured : {type : Boolean },
     isShow : {type : Boolean, default : false },
    
 
