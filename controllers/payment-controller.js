@@ -11,6 +11,7 @@ const axios = require('axios')
 const { v1: uuid } = require('uuid')
 
 
+
 // post payment 
 const createPayment = async (req, res, next) => {
   const  { CstFName, CstEmail, CstMobile, ProductTitle } = req.body;
@@ -227,7 +228,7 @@ const createBasicPayment = async (req, res, next) => {
 const successUrl = async (req, res, next) => {
 
   const postsBalance = req.params.postId;
-  const creatorId = req.params.cId;
+  let creatorId = req.params.cId;
   
 
  var url_parts = url.parse(req.url, true);
@@ -270,9 +271,45 @@ let trackId = query.TrackID;
       return next(error);
     }
      
- 
+ ///done till fetching
 
-    res.status(200).json({ user: user.toObject({ getters: true }),  Balance : postsBalance , creatorID : creatorId });
+   //extracting cstreator id and ommitting :  by slicing 
+  let cString = creatorId.slice(1);
+    console.log("creator id"+cString)
+   /// checkingcreatorId
+   let creatorFound;
+   try {
+       creatorFound = await User.findById(`${cString}`)
+     }
+        catch (err) {
+     const error = new HttpError('creator checking  failed, please try again', 500);
+     console.log(err)
+     return next(error);
+   }
+ 
+   if(!creatorFound){
+    const error = new HttpError('not found plan', 404);
+    return next(error);
+   }
+   
+    console.log("found creator id"+creatorId)
+
+   // updating balance of user based on plan postId
+   let balanceString = postsBalance.slice(1);
+
+ 
+   try {
+    await User.findByIdAndUpdate({ _id : cString }, { $inc: { Balance: balanceString }});
+   } catch (err) {
+     console.log(err)
+     const error = new HttpError(
+       'Something went wrong, could not update Balance.',
+       500
+     );
+     return next(error);
+   }
+
+   res.redirect('/success.html');
 
 }
 
