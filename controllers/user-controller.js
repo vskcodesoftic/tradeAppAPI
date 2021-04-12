@@ -24,7 +24,7 @@ const createUser = async (req, res, next) => {
         const error =  new HttpError("invalid input are passed,please pass valid data",422)
         return next(error)
     }
-    const { name, email, password  , countryCode , phoneNumber } = req.body;
+    const { name, email, password ,nationality, country, nickname , countryCode , phoneNumber } = req.body;
    
 
     let geo = geoip.lookup(req.ip);
@@ -63,6 +63,9 @@ const createUser = async (req, res, next) => {
         countryCode,
         phoneNumber,
         ip,
+        nationality,
+        country,
+        nickname,
         browser
      
     })
@@ -239,7 +242,7 @@ const createProduct = async (req, res, next) => {
       );
     }
   
-    const { title, description, modelNumber, category ,isFeatured } = req.body;
+    const { title, description, modelNumber, category , subcategory ,isFeatured, quantity } = req.body;
   
      const creator = req.userData.userId;
   
@@ -248,9 +251,11 @@ const createProduct = async (req, res, next) => {
       description,
       modelNumber,
       category,
+      subcategory,
       image : req.file.path ,
       creator,
       isFeatured,
+      quantity,
       productid : uuid() 
     });
   
@@ -271,7 +276,7 @@ const createProduct = async (req, res, next) => {
   
   
 
-   /// checking balance and decrementing by -1 from balance after posting product 
+   /// checking balance and decrementing by -1 from balance after posting product  if no bal message error to purchase plan
    let userBal;
    try {
        userBal = await User.findOne({ _id : creator , Balance : { $lte : 0  } })
@@ -287,7 +292,7 @@ const createProduct = async (req, res, next) => {
     return next(error);
    }
    
-     //check if userwants to feauture product or not
+     //check if userwants to feauture product or not if he wants to feature product then his balance will be deducted by -2 if he doesnt then -1
         
       if(isFeatured === "true"){
        console.log("isFeautured is "+isFeatured)

@@ -9,10 +9,12 @@ const productSchema = new Schema({
     description: { type: String, required: true },
     image : { type :String },
     category : {type : String , required : true},
+    quantity : { type : Number },
     subcategory : { type : String },
     productid :{ type: String},
     isFeatured : {type : Boolean },
     isShow : {type : Boolean, default : false },
+
    
 
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
