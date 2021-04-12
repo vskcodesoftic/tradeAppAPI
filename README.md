@@ -1,4 +1,4 @@
-# APIDocs PayOman
+# APIDocs TradeApi
 
 Trade Api Routes
 
