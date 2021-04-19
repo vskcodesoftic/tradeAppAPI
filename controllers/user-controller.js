@@ -24,7 +24,7 @@ const createUser = async (req, res, next) => {
         const error =  new HttpError("invalid input are passed,please pass valid data",422)
         return next(error)
     }
-    const { name, email, dob, password ,nationality, country, nickname , countryCode , phoneNumber } = req.body;
+    const { name, email, dob, gender , password ,nationality, country, nickname , countryCode , phoneNumber } = req.body;
    
 
     let geo = geoip.lookup(req.ip);
@@ -67,6 +67,7 @@ const createUser = async (req, res, next) => {
         nationality,
         country,
         nickname,
+        gender,
         browser
      
     })

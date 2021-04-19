@@ -13,6 +13,7 @@ const userSchema = new Schema({
     country : { type : String},
     dob : { type : Date },
     nickname : { type : String},
+    gender: { type : String},
     resetToken:{ type:String },
     expireToken:{ type:Date },
     ip:{ type:String },
