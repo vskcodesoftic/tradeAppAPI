@@ -8,6 +8,9 @@ const express = require('express');
 
 const path = require('path'); 
 
+const cors = require('cors');
+
+
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 const HttpError = require('./middleware/http-error')
@@ -28,6 +31,9 @@ const tradePageRoutes = require('./routes/trade-routes');
 
 const app = express();
 
+app.use(cors());
+
+
 //ejs
 app.set('view engine', 'ejs');
 
@@ -36,6 +42,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json())
 //routes
 
+
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -43,8 +50,10 @@ app.use((req, res, next) => {
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+
   next();
 });
+
 
 // set public directory to serve static html files 
 app.use('/', express.static(path.join(__dirname, 'public'))); 
