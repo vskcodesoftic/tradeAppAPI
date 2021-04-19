@@ -11,6 +11,7 @@ const userSchema = new Schema({
     phoneNumber : { type : Number, required : true},
     nationality : { type : String},
     country : { type : String},
+    dob : { type : Date },
     nickname : { type : String},
     resetToken:{ type:String },
     expireToken:{ type:Date },
