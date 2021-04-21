@@ -64,7 +64,7 @@ const sendEmailOtpLink = async (to,token) => {
         subject: 'Email verfication ',
         text: 'few steps !',
         html:`
-        <h3>You have requested otp link for password reset link </h3>
+        <h3>You have requested link for password reseting  </h3>
         <h4>Click in this <a href="${process.env.SERVER}/reset/:${token}">link to</a> to Reset Your Password</h4>
         <p>your token </p>
         <p> ${token} </p>
