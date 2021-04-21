@@ -25,6 +25,8 @@ const userSchema = new Schema({
     isSubscribed : { type: Boolean, default: false },
     Balance : {type :Number , default : "0"},
     planexpireToken:{ type:Date },
+    otpHex: { type: String }
+
    
 }, { versionKey: false });
 

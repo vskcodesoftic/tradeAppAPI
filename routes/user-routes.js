@@ -36,12 +36,16 @@ router.post('/login' ,[ check('email').isEmail(), check('password').not().isEmpt
 //updatePassword
 router.post('/updatePassword'  ,[ check('email').isEmail(), check('oldpassword').not().isEmpty(),check('newpassword').not().isEmpty()], userController.updateUserPassword);
 // //forgetPassword sending otp
-// router.post('/forgetPassword', userController.forgetPassword);
+ router.post('/forgetPassword', userController.forgetPassword);
 //resetPassword Link 
 router.post('/passwordResetLink',userController.passwordResetotpLink);
 
 //reseting password after reciving link
 router.post('/newPassword',userController.newPassword);
+
+//
+router.post('/otpVerify',userController.otpVerify);
+
 
 //post product
 router.post('/postItem', checkAuth ,fileUpload.single('image'),

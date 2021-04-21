@@ -314,8 +314,8 @@ const passwordResetotpLink = async (req, res) => {
 const newPassword = async(req,res)=>{
     const newPassword = req.body.password
     const sentToken = req.body.token
-
-     User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+    
+   User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
     .then(user=>{
         if(!user){
             return res.status(422).json({error:"Try again session expired"})
@@ -333,6 +333,36 @@ const newPassword = async(req,res)=>{
     })
 }
 
+
+
+  //verify otp
+  const otpVerify = async (req, res) => {
+    const { otp, email , password  } = req.body;
+    const newPassword = req.body.password
+
+    if (otp && email) {
+      try {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return res.send({ code: 404, msg: 'User not Found' });
+        }
+        if (user.otpHex !== otp) return res.send({ code: 400, msg: 'Wrong OTP' });
+        bcrypt.hash(newPassword,12).then(hashedpassword=>{
+          user.password = hashedpassword
+          user.resetToken = undefined
+          user.expireToken = undefined
+          user.save().then((saveduser)=>{
+            return res.json({message:"password updated success"})
+          })
+       })   
+       
+      } catch (err) {
+        sentryCapture(err);
+        console.log(err);
+        return res.send({ code: 500, msg: 'Internal Server Error' });
+      }
+    }
+  };
 
 
 
@@ -541,3 +571,5 @@ exports.newPassword = newPassword;
 
 exports.passwordResetotpLink = passwordResetotpLink;   //passwordd rest link using nodemailer
 
+//otp verify
+exports.otpVerify = otpVerify;
