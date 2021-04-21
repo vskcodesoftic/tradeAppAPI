@@ -7,6 +7,12 @@ const mongoose = require('mongoose');
 
 let geoip = require('geoip-lite');
 
+const {  sendEmail  ,sendEmailOtpLink } = require('../services/mail.service');
+const {forgetHTML } = require('../tempalates/signUpHtml');
+
+const {generateOTP} = require('../util/genarateOtp');
+
+
 const { validationResult } = require('express-validator')
 const  User = require('../models/user-schema')
 const  Product = require('../models/product-schema');
@@ -234,6 +240,103 @@ catch(err){
 
 }
 
+
+
+// forget Password otp email verfication
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  if (email) {
+    try {
+      const user = await User.findOne({
+        email,
+      });
+      if (!user) {
+        return res.send({ code: 404, msg: 'User not found' });
+      }
+      const otp = generateOTP();
+      const html = forgetHTML(user.name, otp);
+
+      await User.updateOne({ _id: user._id }, { otpHex: otp });
+      await sendEmail(user.email, html);
+      return res.send({
+        code: 200,
+        email: user.email,
+        msg: 'OTP send to Your Email.',
+      });
+    } catch (err) {
+      
+      console.log(err);
+      return res.send({ code: 500, msg: 'Internal server error' });
+    }
+  }
+  return res.send({
+    code: 400,
+    msg: 'Email is required',
+  });
+};
+
+
+
+
+//rest opt password -rest link using node mailer
+const passwordResetotpLink = async (req, res) => {
+  crypto.randomBytes(32,(err,buffer)=>{
+      if(err){
+          console.log(err)
+      }
+      const token = buffer.toString("hex")
+      User.findOne({email:req.body.email})
+      .then(user=>{
+          if(!user){
+              return res.status(422).json({error:"User dont exists with that email"})
+          }
+          user.resetToken = token
+          user.expireToken = Date.now() + 3600000
+          user.save().then((result)=>{
+        
+         sendEmailOtpLink(
+                  user.email,
+                  token 
+                  
+              )
+              res.json({message:"check your email"})
+
+          })
+         
+
+      })
+  })
+}
+
+
+
+//new password after reciveing link
+const newPassword = async(req,res)=>{
+    const newPassword = req.body.password
+    const sentToken = req.body.token
+
+     User.findOne({resetToken:sentToken,expireToken:{$gt:Date.now()}})
+    .then(user=>{
+        if(!user){
+            return res.status(422).json({error:"Try again session expired"})
+        }
+        bcrypt.hash(newPassword,12).then(hashedpassword=>{
+           user.password = hashedpassword
+           user.resetToken = undefined
+           user.expireToken = undefined
+           user.save().then((saveduser)=>{
+               res.json({message:"password updated success"})
+           })
+        })
+    }).catch(err=>{
+        console.log(err)
+    })
+}
+
+
+
+
+
 // post product 
 const createProduct = async (req, res, next) => {
     const errors = validationResult(req);
@@ -354,6 +457,7 @@ const createProduct = async (req, res, next) => {
   };
   
 
+
   //get products by creatorId(objectId of user)
 
   const getProductsByUserId = async (req, res, next) => {
@@ -423,9 +527,17 @@ exports.createUser =  createUser;
 exports.userLogin =  userLogin;
 //update user password based on old password
 exports.updateUserPassword = updateUserPassword;
+//forget password
+exports.forgetPassword = forgetPassword;
 //post product
 exports.createProduct = createProduct;
 //get products by creator id
 exports.getProductsByUserId = getProductsByUserId;
 //get product by product id
 exports.getProductById = getProductById;
+
+//nnew password
+exports.newPassword = newPassword;
+
+exports.passwordResetotpLink = passwordResetotpLink;   //passwordd rest link using nodemailer
+
