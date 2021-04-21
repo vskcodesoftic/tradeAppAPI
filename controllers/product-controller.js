@@ -140,7 +140,7 @@ const getProductById = async (req, res, next) => {
       product = await Product.findById(productId);
     } catch (err) {
       const error = new HttpError(
-        'Something went wrong, could not update product.',
+        'Something went wrong, could not found to  update product.',
         500
       );
       return next(error);
@@ -153,7 +153,7 @@ const getProductById = async (req, res, next) => {
       await product.save();
     } catch (err) {
       const error = new HttpError(
-        'Something went wrong, could not update product.',
+        'Something went wrong, could not update the  product.',
         500
       );
       return next(error);
