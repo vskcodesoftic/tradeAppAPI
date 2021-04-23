@@ -10,6 +10,7 @@ const advertisementSchema = new Schema({
     image : { type :String },
     isFeatured : {type : Boolean },
     isShow : {type : Boolean, default : false },
+    createdAt : { type: Date, default: Date.now}
 
    });
 

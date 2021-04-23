@@ -10,10 +10,8 @@ const bannerSchema = new Schema({
     image : { type :String },
     isFeatured : {type : Boolean },
     isShow : {type : Boolean, default : false },
+    createdAt : { type: Date, default: Date.now},
 
-   
-
-    creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
-});
+   });
 
 module.exports = mongoose.model('Banner', bannerSchema);
