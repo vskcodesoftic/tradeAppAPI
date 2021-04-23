@@ -15,16 +15,16 @@ router.get('/', (req, res, next) => {
 
 
 //postBannerImages
-router.post('/bannerImages', fileUpload.single('image'), adminController.postBannerImages);
+router.post('/banner/addImages', fileUpload.single('image'), adminController.postBannerImages);
 
 //getImages
-router.get('/bannerImages', adminController.getBannerImages);
+router.get('/banner/getImages', adminController.getBannerImages);
 
 //postAdvertisementImages
-router.post('/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);
+router.post('/adds/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);
 
 //getImages
-router.get('/getAddvertisementImages', adminController.getAdvertisementImages);
+router.get('/adds/getImages', adminController.getAdvertisementImages);
 
 
 //create Plan
