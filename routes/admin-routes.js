@@ -24,7 +24,7 @@ router.get('/bannerImages', adminController.getBannerImages);
 router.post('/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);
 
 //getImages
-router.get('/getAddvertisementImgs', adminController.getAdvertisementImages);
+router.get('/getAddvertisementImages', adminController.getAdvertisementImages);
 
 
 //create Plan
