@@ -23,7 +23,7 @@ const sendTradeRequest = async (req, res, next) => {
     );
     return next(error);
   }
-  const creator = req.userData;
+  const loggedUser = req.userData;
 
   const {
     userproductId,
@@ -35,7 +35,8 @@ const sendTradeRequest = async (req, res, next) => {
     productsOffered,
   } = req.body;
 
-  const fruits = await [`"${productIds}"`];
+  const ProposedProductIdbyLoggedUser = await [{"id" :`${productIds}`}];
+
 
   const productId = userproductId; //(objectidofproduct)
 
@@ -79,7 +80,7 @@ const sendTradeRequest = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ dataOne: fruits[0], creatorEmail: creator.email });
+  res.json({ ProposedProductIds: ProposedProductIdbyLoggedUser[0], LoggedUserEmail: loggedUser.email });
 };
 
 exports.sendTradeRequest = sendTradeRequest;
