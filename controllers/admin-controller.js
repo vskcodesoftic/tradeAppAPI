@@ -9,6 +9,7 @@ const  Product = require('../models/product-schema')
 const Banner = require('../models/banner-schema');
 const Advertisement = require('../models/advertisement-schema');
 const  Plan = require('../models/plans-schema');
+const Category = require('../models/category-schema');
 
 const HttpError = require('../middleware/http-error');
 
@@ -113,6 +114,60 @@ const getAdvertisementImages = async (req, res ,next) => {
   }
   res.json({ advertisementImages : addImages.map( Imgs => Imgs.toObject({ getters : true}))})
 }
+
+//post add category 
+const addCategory = async(req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { subcategory , category} = req.body;
+  
+  //const a= [{ cat :[ `${subcategory}`] }]
+  //const fruits = await [`"${productIds}"`];
+   //const category = await [`${subcategory}`]
+
+  const createdCategory = new Category({
+     category,
+     subcategory
+  });
+
+ 
+  try {
+      await createdCategory.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Creating Category failed, please try again.',
+        500
+      );
+      console.log(err)
+      return next(error);
+    }
+
+
+  res.status(201).json({ category: createdCategory });
+}
+
+
+
+//get list of category 
+const getCategories = async (req, res, next) => {
+  let category
+  try{
+    category = await Category.find()
+  }
+  catch(err){
+      const error = new HttpError("can't fetch plans complete request",500)
+      return next(error)
+  }
+  res.json({ categories : category.map( category => category.toObject({ getters : false}))})
+  
+}
+
 
 
 
@@ -290,3 +345,5 @@ const updatePlan = async (req, res, next) => {
   exports.getBannerImages = getBannerImages;
   exports.postAdvertisementImages = postAdvertisementImages;
   exports.getAdvertisementImages = getAdvertisementImages;
+  exports.addCategory = addCategory;
+  exports.getCategories = getCategories;

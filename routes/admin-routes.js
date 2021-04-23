@@ -26,6 +26,12 @@ router.post('/adds/addImages', fileUpload.single('image'), adminController.postA
 //getImages
 router.get('/adds/getImages', adminController.getAdvertisementImages);
 
+//postCategory
+router.post('/category/addCategory'  , adminController.addCategory);
+
+//getCategories
+router.get('/category/getCategory'  , adminController.getCategories);
+
 
 //create Plan
 router.post('/createPlan'  , adminController.createPlan);
