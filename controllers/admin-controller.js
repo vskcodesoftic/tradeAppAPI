@@ -3,13 +3,116 @@ const mongoose = require('mongoose');
 
 
 const { validationResult } = require('express-validator')
+
 const  User = require('../models/user-schema')
 const  Product = require('../models/product-schema')
-
+const Banner = require('../models/banner-schema');
+const Advertisement = require('../models/advertisement-schema');
 const  Plan = require('../models/plans-schema');
+
 const HttpError = require('../middleware/http-error');
 
 const { v1: uuid } = require('uuid')
+
+
+
+
+//postBannerImages
+const postBannerImages = async (req ,res , next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { title, description, image, isFeatured, isShow } = req.body;
+
+  const createdBanner = new Banner({
+    title,
+    description,
+    image : req.file.path ,
+    isFeatured,
+    isShow,
+  });
+
+
+  try {
+    await createdBanner.save()
+  }
+catch(err){
+  console.log(err)
+  const error = new HttpError(
+    'Creating product failed, please try again.',
+    500
+  );
+  return next(error);
+}
+res.json({ Banner : createdBanner })
+}
+
+//get bannerImgs
+const getBannerImages = async (req, res ,next) => {
+  let BannerImages
+  try{
+      BannerImages = await Banner.find().sort({_id:1}).limit(5);
+  }
+  catch(err){
+      const error = new HttpError("can't fetch banner images ",500)
+      return next(error)
+  }
+  res.json({ bannerImages : BannerImages.map( Banner => Banner.toObject({ getters : true}))})
+}
+
+
+//postAdvertisementImages
+const postAdvertisementImages = async (req ,res , next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { title, description, image, isFeatured, isShow } = req.body;
+
+  const createdAdvertisementImage = new Advertisement({
+    title,
+    description,
+    image : req.file.path ,
+    isFeatured,
+    isShow,
+  });
+
+
+  try {
+    await createdAdvertisementImage.save()
+  }
+catch(err){
+  console.log(err)
+  const error = new HttpError(
+    ' uploading failed, please try again.',
+    500
+  );
+  return next(error);
+}
+res.json({ Advertisement : createdAdvertisementImage })
+}
+
+//get bannerImgs
+const getAdvertisementImages = async (req, res ,next) => {
+  let addImages
+  try{
+      addImages = await Advertisement.find().sort({_id:1}).limit(5);
+  }
+  catch(err){
+      const error = new HttpError("can't fetch addvertisement images ",500)
+      return next(error)
+  }
+  res.json({ advertisementImages : addImages.map( Imgs => Imgs.toObject({ getters : true}))})
+}
 
 
 
@@ -183,3 +286,7 @@ const updatePlan = async (req, res, next) => {
   exports.updatePlan = updatePlan;
   exports.deletePlan = deletePlan;
   exports.updateProductVisiblity = updateProductVisiblity;
+  exports.postBannerImages = postBannerImages;
+  exports.getBannerImages = getBannerImages;
+  exports.postAdvertisementImages = postAdvertisementImages;
+  exports.getAdvertisementImages = getAdvertisementImages;

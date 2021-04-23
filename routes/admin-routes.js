@@ -5,11 +5,26 @@ const router = express.Router();
 
 const adminController = require('../controllers/admin-controller')
 
+const fileUpload = require('../middleware/file-upload');
+
 
 router.get('/', (req, res, next) => {
  
   res.json({message: 'admin page routes'});
 });
+
+
+//postBannerImages
+router.post('/bannerImages', fileUpload.single('image'), adminController.postBannerImages);
+
+//getImages
+router.get('/bannerImages', adminController.getBannerImages);
+
+//postAdvertisementImages
+router.post('/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);
+
+//getImages
+router.get('/getAddvertisementImgs', adminController.getAdvertisementImages);
 
 
 //create Plan
