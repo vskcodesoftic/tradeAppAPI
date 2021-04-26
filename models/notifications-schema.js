@@ -10,7 +10,7 @@ const notificationSchema = new Schema({
     senderId : { type : String },
     senderName :{ type: String},
     senderNationality: { type : String},
-    productsOffered : [{ type : String}],
+    // productsOffered : [{ type : String}],
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
 });
 
