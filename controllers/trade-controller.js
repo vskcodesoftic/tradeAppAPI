@@ -180,9 +180,96 @@ const sendTradeRequest = async (req, res, next) => {
   res.json({ ProposedProductIds: await offeredProductId.pids, LoggedUserEmail: loggedUser.email });
 };
 
-const acceptTrade = async (req, res ,next) => {
 
-  res.json({ message : " trade accept route"})
+
+
+
+
+
+const acceptTrade = async (req, res ,next) => {
+ 
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors);
+    const error = new HttpError(
+      "invalid input are passed,please pass valid data",
+      422
+    );
+    return next(error);
+  }
+
+
+
+ 
+ const  notificationID =  req.params.id; 
+  //let productIds = []
+  //let productIds = await {offeredProductId}
+  
+
+  // finding the productId of provided
+  let notification;
+  try {
+    notification = await Notification.findById(notificationID);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find a notification.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!notification) {
+    const error = new HttpError(
+      "Could not find a notification for the provided id.",
+      404
+    );
+    return next(error);
+  }
+
+
+   // offered Products 
+   let offrdProducts  = await  notification.productsOffered;
+     let ProductIds=[];
+    for (const [key, value] of Object.entries(offrdProducts[0])) {
+      ProductIds.push(`${value}`)
+          
+      //UPDATINGproduct
+
+//updating status of products
+let product;
+try {
+  product = await Product.findById(`${value}`);
+} catch (err) {
+  console.log(err)
+  const error = new HttpError(
+    'Something went wrong, could not found to  update product.',
+    500
+  );
+  return next(error);
+}
+
+//setting product expiry 15days
+product.isShow = "false";
+product.expireToken = Date.now() + 1297000000
+
+try {
+  await product.save();
+} catch (err) {
+  console.log(err)
+  const error = new HttpError(
+    'Something went wrong, could not update the product.',
+    500
+  );
+  return next(error);
+}
+
+   
+
+  
+    }
+
+ res.json({ Productids : ProductIds , message : "isShow status updates to false  and product expiry to 15days"})
+
 
 }
 

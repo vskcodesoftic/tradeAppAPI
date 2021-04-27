@@ -15,7 +15,7 @@ const { v1: uuid } = require('uuid')
 const getProductsList = async (req, res, next) => {
   let products
   try{
-      products = await Product.find()
+      products = await Product.find({ isShow : true })
   }
   catch(err){
       const error = new HttpError("can not fetch products complete request",500)
@@ -51,7 +51,7 @@ const getProductsListbyCategory = async (req, res, next) => {
 const getFeaturedProductsList = async (req, res, next) => {
   let products
   try{
-      products = await Product.find({ isFeatured : "false" })
+      products = await Product.find({ isFeatured : "true", isShow :"true" })
   }
   catch(err){
       const error = new HttpError("can not fetch products complete request",500)

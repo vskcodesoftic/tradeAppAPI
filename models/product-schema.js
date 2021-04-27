@@ -13,8 +13,9 @@ const productSchema = new Schema({
     subcategory : { type : String },
     productid :{ type: String},
     isFeatured : {type : Boolean },
-    isShow : {type : Boolean, default : false },
-
+    isShow : {type : Boolean, default : true },
+    resetToken:{ type:String },
+    expireToken:{ type:Date },
    
 
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
