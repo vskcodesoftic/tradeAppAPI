@@ -25,6 +25,7 @@ const sendTradeRequest = async (req, res, next) => {
     return next(error);
   }
 
+  let message 
   //user who has loggedin
   const loggedUser = req.userData;
 
@@ -95,8 +96,13 @@ const sendTradeRequest = async (req, res, next) => {
 
 
 
-  const userIds = await user.email
-  console.log(userIds)
+  const PrdEmail = await user.email
+  const PrdCountry = await user.country
+  const PrdNationality = await user.nationality
+  const PrdNickname = await user.nickname
+
+
+
 
 
 
@@ -129,15 +135,27 @@ const sendTradeRequest = async (req, res, next) => {
 
     console.log("title :" + productTitle +" ,"+"desc :" +productDescription +" ,"+"quantity  :" + productQuantity)
 
-    const message = `"your message : ${productTitle}, ${productDescription}"`
+     message = `"your message : ${productTitle}, ${productDescription}"`
     console.log(message)
+
+
+  
+  }
 
   //sendingNotification
   const createdNotification = new Notification({
     message,
     creator: creatorIdofUser,
-  });
+    productsOffered : [offrdProducts],
+    userproductId ,
+    productOfferedEmail  :  PrdEmail,
+    productOfferedNationality :   PrdNationality,
+    productOfferedCountry : PrdCountry,
+    productOfferedNickname : PrdNickname,
+    userEmail : loggedUser.email,
+    country: PrdCountry,
 
+  });
 
   try {
     const sess = await mongoose.startSession();
@@ -158,12 +176,15 @@ const sendTradeRequest = async (req, res, next) => {
     );
     return next(error);
   }
-  }
-
-
-
    
   res.json({ ProposedProductIds: await offeredProductId.pids, LoggedUserEmail: loggedUser.email });
 };
 
+const acceptTrade = async (req, res ,next) => {
+
+  res.json({ message : " trade accept route"})
+
+}
+
 exports.sendTradeRequest = sendTradeRequest;
+exports.acceptTrade = acceptTrade;

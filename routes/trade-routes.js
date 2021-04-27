@@ -14,4 +14,8 @@ router.get('/', (req, res, next) => {
 
 router.post('/sendTradeRequest', checkAuth ,tradeController.sendTradeRequest)
 
+router.post('/acceptTrade', checkAuth ,tradeController.acceptTrade)
+
+
+
 module.exports = router;
