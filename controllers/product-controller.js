@@ -13,17 +13,99 @@ const { v1: uuid } = require('uuid')
 
 //get list of products 
 const getProductsList = async (req, res, next) => {
-  let products
+
+  const d =[]
+
+//checking products expiry
+
+
+
+  let product
   try{
-      products = await Product.find({ isShow : true })
+      product = await Product.find({expireToken:{$gt:Date.now()} , isShow : false })
   }
   catch(err){
       const error = new HttpError("can not fetch products complete request",500)
       return next(error)
   }
-  res.json({ products : products.map( product => product.toObject({ getters : true})) })
+  if(product) {
+  const pids = []
+   product.map( p =>   pids.push(p.id)  
+    ) 
+
+  pids.forEach(function (item, index) {
+         d.push(item)
+  });
+
+  }
+  else if(!product){
+    const error = new HttpError(
+      "Could not find a product for the provided ids",
+      404
+    );
+    return next(error);
+  }
+
+
+ let products
+ var i;
+ for (i = 0; i < d.length; i++) {
+  try{   
+      products = await Product.findById(d[i]);
+      //await Product.find({ expireToken:{$lt:Date.now()}})
+  }
+  catch(err){
+    console.log(err)
+      const error = new HttpError("can not fetch products complete request",500)
+      return next(error)
+  }
+ 
   
+  products.isShow = "true"
+  products.expireToken = " "
+
+  //res.json({ title : pTtile})
+  //products.isShow = "false";
+  
+    try {
+      await products.save();
+    } catch (err) {
+      console.log(err)
+      const error = new HttpError(
+        'Something went wrong, could not update the lok product.',
+        500
+      );
+      return next(error);
+    }
+  }
+
+
+
+
+//displaying products
+
+
+let productsupdated
+try{
+    productsupdated = await Product.find({ isShow : true })
 }
+catch(err){
+    const error = new HttpError("can not fetch products complete request",500)
+    return next(error)
+}
+res.json({ products : productsupdated.map( product => product.toObject({ getters : true})) })
+
+}
+
+
+
+
+
+
+
+
+
+
 
 //get list of  products by category
 const getProductsListbyCategory = async (req, res, next) => {

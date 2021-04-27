@@ -250,7 +250,7 @@ try {
 
 //setting product expiry 15days
 product.isShow = "false";
-product.expireToken = Date.now() + 1297000000
+product.expireToken = Date.now() + 1
 
 try {
   await product.save();
