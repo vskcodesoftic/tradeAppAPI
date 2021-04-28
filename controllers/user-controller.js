@@ -380,20 +380,7 @@ const createProduct = async (req, res, next) => {
     const { title, description, modelNumber, category , subcategory ,isFeatured, quantity } = req.body;
   
      const creator = req.userData.userId;
-  
-    const createdProduct = new Product({
-      title,
-      description,
-      modelNumber,
-      category,
-      subcategory,
-      image : req.file.path ,
-      creator,
-      isFeatured,
-      quantity,
-      productid : uuid() 
-    });
-  
+
     let user;
     try {
         user = await User.findById(creator);
@@ -409,7 +396,25 @@ const createProduct = async (req, res, next) => {
       return next(error);
     }
   
-  
+   const Nickname = user.nickname;
+   const Country = user.country;
+
+
+     
+   const createdProduct = new Product({
+    title,
+    description,
+    modelNumber,
+    category,
+    subcategory,
+    image : req.file.path ,
+    creator,
+    isFeatured,
+    quantity,
+    nickname : Nickname,
+    country : Country,
+    productid : uuid() 
+  });
 
    /// checking balance and decrementing by -1 from balance after posting product  if no bal message error to purchase plan
    let userBal;

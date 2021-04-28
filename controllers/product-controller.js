@@ -18,8 +18,6 @@ const getProductsList = async (req, res, next) => {
 
 //checking products expiry
 
-
-
   let product
   try{
       product = await Product.find({expireToken:{$gt:Date.now()} , isShow : false })
