@@ -18,6 +18,8 @@ const productSchema = new Schema({
     expireToken:{ type:Date },
     nickname: {type :String},
     country : {type :String},
+    CountryTwoLetterCode : { type : String},
+
    
 
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
