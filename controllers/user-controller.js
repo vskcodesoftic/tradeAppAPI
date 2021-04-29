@@ -399,6 +399,7 @@ const createProduct = async (req, res, next) => {
   
    const Nickname = user.nickname;
    const Country = user.country;
+   const CountryTwoLetterCode = user.countryTwoLetterCode;
 
 
      
@@ -414,6 +415,7 @@ const createProduct = async (req, res, next) => {
     quantity,
     nickname : Nickname,
     country : Country,
+    countryTwoLetterCode : CountryTwoLetterCode,
     productid : uuid() 
   });
 
