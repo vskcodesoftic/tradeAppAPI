@@ -18,7 +18,7 @@ const productSchema = new Schema({
     expireToken:{ type:Date },
     nickname: {type :String},
     country : {type :String},
-    CountryTwoLetterCode : { type : String},
+    countryTwoLetterCode : { type : String},
 
    
 
