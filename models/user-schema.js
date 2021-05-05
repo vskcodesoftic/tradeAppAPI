@@ -8,7 +8,7 @@ const userSchema = new Schema({
     email: { type: String, required: true , unique : true},
     password: { type: String , required: true},
     country : {type : Number, required : true},
-    countryTwoLetterCode : {type : String, required : true},
+    countryTwoLetterCode : {type : String },
 
     phoneNumber : { type : Number, required : true},
     nationality : { type : String},
