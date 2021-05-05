@@ -14,14 +14,15 @@ router.get('/', (req, res, next) => {
 
 // pass checkAuth in production
 
-
+//down here in /pay
 //pay simple
 router.post('/pay' ,
 paymentController.createPayment);
 
 
+
 //pay routue based on plan type 
-router.post('/pay/:pid' ,
+router.post('/pay/:pid' ,checkAuth,
 paymentController.createBasicPayment);
 
 

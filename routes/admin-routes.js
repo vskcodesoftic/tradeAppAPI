@@ -13,6 +13,9 @@ router.get('/', (req, res, next) => {
   res.json({message: 'admin page routes'});
 });
 
+//get list of products
+router.get('/usersList', adminController.getUsersList);
+
 
 //postBannerImages
 router.post('/banner/addImages', fileUpload.single('image'), adminController.postBannerImages);
