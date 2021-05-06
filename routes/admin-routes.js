@@ -40,10 +40,10 @@ router.get('/category/getCategory'  , adminController.getCategories);
 router.post('/createPlan'  , adminController.createPlan);
 
 //plans list
-router.get('/list'  , adminController.getPlansList);
+router.get('/plans/list'  , adminController.getPlansList);
 
 //updateplan 
-router.patch('/updatePlan',adminController.updatePlan );
+router.patch('/plans/updatePlan',adminController.updatePlan );
 
 //delete plan by id
 router.delete('/:pid', adminController.deletePlan);
