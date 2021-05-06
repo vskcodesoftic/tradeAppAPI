@@ -347,6 +347,44 @@ const updatePlan = async (req, res, next) => {
     res.status(200).json({ product: product.toObject({ getters: true }) });
   };
   
+//update product
+const updatePlanById = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { title, description } = req.body;
+  const planId = req.params.pid;
+
+  let plan;
+  try {
+    plan = await Plan.findById(planId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not found to  update product.',
+      500
+    );
+    return next(error);
+  }
+
+  plan.title = title;
+  plan.description = description;
+
+  try {
+    await plan.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update the  plan.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ plan: plan.toObject({ getters: true }) });
+};
 
   
   exports.createPlan =createPlan ;
@@ -361,3 +399,4 @@ const updatePlan = async (req, res, next) => {
   exports.addCategory = addCategory;
   exports.getCategories = getCategories;
   exports.getUsersList = getUsersList;
+  exports.updatePlanById = updatePlanById;

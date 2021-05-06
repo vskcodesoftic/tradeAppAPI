@@ -48,6 +48,18 @@ router.patch('/plans/updatePlan',adminController.updatePlan );
 //delete plan by id
 router.delete('/plans/:pid', adminController.deletePlan);
 
+//updateproduct by id
+router.patch(
+  '/plans/:pid',
+  [
+    check('title')
+      .not()
+      .isEmpty(),
+    check('description').not().isEmpty()
+  ],
+  adminController.updatePlanById
+);
+
 //updateproduct visiblity
 router.patch('/plans/p/:pid', adminController.updateProductVisiblity);
 module.exports = router;
