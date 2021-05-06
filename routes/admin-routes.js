@@ -37,7 +37,7 @@ router.get('/category/getCategory'  , adminController.getCategories);
 
 
 //create Plan
-router.post('/createPlan'  , adminController.createPlan);
+router.post('/plans/createPlan'  , adminController.createPlan);
 
 //plans list
 router.get('/plans/list'  , adminController.getPlansList);
@@ -46,8 +46,8 @@ router.get('/plans/list'  , adminController.getPlansList);
 router.patch('/plans/updatePlan',adminController.updatePlan );
 
 //delete plan by id
-router.delete('/:pid', adminController.deletePlan);
+router.delete('/plans/:pid', adminController.deletePlan);
 
 //updateproduct visiblity
-router.patch('/u/:pid', adminController.updateProductVisiblity);
+router.patch('/plans/p/:pid', adminController.updateProductVisiblity);
 module.exports = router;
