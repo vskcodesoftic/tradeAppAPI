@@ -55,7 +55,11 @@ router.patch(
     check('title')
       .not()
       .isEmpty(),
-    check('description').not().isEmpty()
+    check('description').not().isEmpty(),
+    check('visbility').not().isEmpty(),
+      check('amount').not().isEmpty(),
+      check('posts').not().isEmpty(),
+      check('type').not().isEmpty()
   ],
   adminController.updatePlanById
 );

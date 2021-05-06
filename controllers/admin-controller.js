@@ -356,7 +356,7 @@ const updatePlanById = async (req, res, next) => {
     );
   }
 
-  const { title, description } = req.body;
+  const { title, description,visbility,amount, posts, type } = req.body;
   const planId = req.params.pid;
 
   let plan;
@@ -372,6 +372,12 @@ const updatePlanById = async (req, res, next) => {
 
   plan.title = title;
   plan.description = description;
+  plan.visbility = visbility;
+  plan.amount = amount;
+  plan.posts = posts;
+  plan.type = type;
+ 
+
 
   try {
     await plan.save();
