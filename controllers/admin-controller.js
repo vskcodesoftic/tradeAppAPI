@@ -316,7 +316,7 @@ const updatePlan = async (req, res, next) => {
   
     let product;
     try {
-      product = await Product.updateOne(
+      product = await Product.update(
         { productid : productId },
         {
           isShow 
@@ -355,7 +355,6 @@ const updatePlanById = async (req, res, next) => {
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
-
   const { title, description,visbility,amount, posts, type } = req.body;
   const planId = req.params.pid;
 
@@ -364,7 +363,7 @@ const updatePlanById = async (req, res, next) => {
     plan = await Plan.findById(planId);
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not found to  update product.',
+      'Something went wrong, could not found to  update plan.',
       500
     );
     return next(error);
@@ -375,13 +374,14 @@ const updatePlanById = async (req, res, next) => {
   plan.visbility = visbility;
   plan.amount = amount;
   plan.posts = posts;
-  plan.type = type;
- 
+  plan.type =type;
+
 
 
   try {
     await plan.save();
   } catch (err) {
+    console.log(err)
     const error = new HttpError(
       'Something went wrong, could not update the  plan.',
       500
@@ -390,6 +390,7 @@ const updatePlanById = async (req, res, next) => {
   }
 
   res.status(200).json({ plan: plan.toObject({ getters: true }) });
+
 };
 
   

@@ -4,10 +4,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const plansSchema = new Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
+    title: { type: String  },
+    description: { type: String },
     amount : { type : Number },
-    posts : {type : Number , required : true},
+    posts : {type : Number },
     type : { type :String },
     visbility : { type :Boolean , default : true},
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}

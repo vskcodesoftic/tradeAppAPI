@@ -13,6 +13,8 @@ router.get('/', (req, res, next) => {
   res.json({message: 'admin page routes'});
 });
 
+
+
 //get list of products
 router.get('/usersList', adminController.getUsersList);
 
@@ -48,18 +50,17 @@ router.patch('/plans/updatePlan',adminController.updatePlan );
 //delete plan by id
 router.delete('/plans/:pid', adminController.deletePlan);
 
-//updateproduct by id
+//updateplan by id
 router.patch(
-  '/plans/:pid',
+  '/plans/u/:pid',
   [
     check('title')
       .not()
       .isEmpty(),
     check('description').not().isEmpty(),
-    check('visbility').not().isEmpty(),
-      check('amount').not().isEmpty(),
-      check('posts').not().isEmpty(),
-      check('type').not().isEmpty()
+    check('amount').not().isEmpty().isNumeric(),
+    check('posts').not().isEmpty().isNumeric(),
+    check('type').not().isEmpty()
   ],
   adminController.updatePlanById
 );
