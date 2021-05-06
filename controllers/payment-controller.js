@@ -11,6 +11,19 @@ const axios = require('axios')
 const { v1: uuid } = require('uuid')
 
 
+//get list of payments
+const getPaymentsList = async (req ,res ,next) => {
+  let payments
+  try{
+      payments = await Payment.find()
+  }
+  catch(err){
+      const error = new HttpError("can not fetch payments complete request",500)
+      return next(error)
+  }
+  res.json({ payments : payments.map( payments => payments.toObject({ getters : true}))})
+  
+}
 
 // post payment 
 const createPayment = async (req, res, next) => {
@@ -317,3 +330,4 @@ let trackId = query.TrackID;
   exports.successUrl = successUrl;
 
   exports.createBasicPayment = createBasicPayment;
+  exports.getPaymentsList = getPaymentsList;

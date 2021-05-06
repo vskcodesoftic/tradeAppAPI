@@ -30,4 +30,9 @@ paymentController.createBasicPayment);
 router.get('/successUrl/:postId/creator/:cId',
 paymentController.successUrl);
 
+
+//payments list
+router.get('/paymentslist'  , paymentController.getPaymentsList);
+
+
 module.exports = router;
