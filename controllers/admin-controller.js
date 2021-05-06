@@ -15,6 +15,12 @@ const HttpError = require('../middleware/http-error');
 
 const { v1: uuid } = require('uuid')
 
+const FCM = require('fcm-node')
+
+
+const serverKey = require('../firebase/config/firebasecred.json') //put the generated private key path here    
+    
+const fcm = new FCM(serverKey)
 
 //get list of users
 const getUsersList = async(req, res, next) => {
@@ -347,7 +353,7 @@ const updatePlan = async (req, res, next) => {
     res.status(200).json({ product: product.toObject({ getters: true }) });
   };
   
-//update product
+//update product by id
 const updatePlanById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -393,7 +399,41 @@ const updatePlanById = async (req, res, next) => {
 
 };
 
+ //send push notification
+ const sendNotification = async(req , res, next) => {
+  const {registratinToken}  = req.body;
+  const notification_options = {
+    priority: "high",
+    timeToLive: 60 * 60 * 24
+  };
   
+  const options =  notification_options
+ 
+  var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+    to: `${registratinToken}`,
+
+    notification: {
+        title: 'Title of your push notification', 
+        body: 'Body of your push notification' 
+    }
+    
+  
+}
+
+// Send a message to the device corresponding to the provided
+// registration token.
+
+await fcm.send(message, function(err, response){
+  if (err) {
+    console.log(err)
+    res.json({message : response})
+  } else {
+      res.json({message : response})
+  }
+})
+
+ }
+
   exports.createPlan =createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;
@@ -407,3 +447,4 @@ const updatePlanById = async (req, res, next) => {
   exports.getCategories = getCategories;
   exports.getUsersList = getUsersList;
   exports.updatePlanById = updatePlanById;
+  exports.sendNotification = sendNotification;
