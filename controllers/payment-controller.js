@@ -322,7 +322,8 @@ let trackId = query.TrackID;
      return next(error);
    }
 
-   res.redirect('/success.html');
+   //res.redirect('/success.html');
+   res.json({ message : "payment successfull"})
 
 }
 
