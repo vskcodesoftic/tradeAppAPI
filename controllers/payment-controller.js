@@ -206,7 +206,7 @@ const createBasicPayment = async (req, res, next) => {
           console.log(response)
           const createdPlan = new Payment({
             order_id : OrderId,
-            total_price : '90',
+            total_price : identifiedPrice,
             CstFName ,
             CstEmail,
             CstMobile,
