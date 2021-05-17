@@ -199,7 +199,7 @@ const createBasicPayment = async (req, res, next) => {
         test_mode:'',
         CstFName : "siva",
         CstEmail : "testing@gmail.com",
-        success_url :`${process.env.SERVER_URL}/api/payment/successUrl/:${postId}/creator/:${cId}`
+        success_url :`${process.env.SERVER_URL}api/payment/successUrl/:${postId}/creator/:${cId}`
 
       })
       .then(async (response) =>{

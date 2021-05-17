@@ -64,6 +64,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.use(homepageRoutes);
 
+
 //customer Routes
 app.use('/api/user/',userPageRoutes);
 

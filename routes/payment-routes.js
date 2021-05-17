@@ -22,7 +22,7 @@ paymentController.createPayment);
 
 
 //pay routue based on plan type 
-router.post('/pay/:pid' ,checkAuth,
+router.get('/pay/:pid' ,
 paymentController.createBasicPayment);
 
 
