@@ -30,6 +30,10 @@ paymentController.createBasicPayment);
 router.get('/successUrl/:postId/creator/:cId',
 paymentController.successUrl);
 
+//post  error url payment
+router.get('/errorUrl',
+paymentController.errorUrl);
+
 
 //payments list
 router.get('/paymentslist'  , paymentController.getPaymentsList);

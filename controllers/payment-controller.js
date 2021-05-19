@@ -195,7 +195,7 @@ const createBasicPayment = async (req, res, next) => {
         total_price: identifiedPrice,  
         CurrencyCode:'USD',
       //  success_url:process.env.SUCCESS_URL,
-        error_url: process.env.ERROR_URL,
+        error_url: `${process.env.SERVER_URL}api/payment/errorUrl`,
         test_mode:'',
         CstFName : "siva",
         CstEmail : "testing@gmail.com",
@@ -322,13 +322,19 @@ let trackId = query.TrackID;
      return next(error);
    }
 
-   //res.redirect('/success.html');
-   res.json({ message : "payment successfull"})
+   res.redirect('/success.html');
+  //res.json({ message : "payment successfull"})
 
 }
 
+//errorUrl
+const errorUrl = async (req , res,next) => {
+  res.redirect('/failed.html');
+
+}
   exports.createPayment = createPayment;
   exports.successUrl = successUrl;
+  exports.errorUrl = errorUrl;
 
   exports.createBasicPayment = createBasicPayment;
   exports.getPaymentsList = getPaymentsList;
