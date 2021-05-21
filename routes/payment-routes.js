@@ -16,13 +16,13 @@ router.get('/', (req, res, next) => {
 
 //down here in /pay
 //pay simple
-router.post('/pay' ,
+router.post('/pay' ,checkAuth,
 paymentController.createPayment);
 
 
 
 //pay routue based on plan type 
-router.get('/pay/:pid' ,
+router.get('/pay/:pid' ,checkAuth ,
 paymentController.createBasicPayment);
 
 

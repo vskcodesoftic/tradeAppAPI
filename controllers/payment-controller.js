@@ -122,9 +122,9 @@ const createBasicPayment = async (req, res, next) => {
       );
     }
   
-   //const creator = req.userData.userId;
+   const creator = req.userData.userId;
 
-    const creator =  "606ab49296e7700f29b6ac5e";
+    //const creator =  "606ab49296e7700f29b6ac5e";
 
     //temproy for testing after in prodction protect route and pass userId to creator  
       
@@ -195,11 +195,11 @@ const createBasicPayment = async (req, res, next) => {
         total_price: identifiedPrice,  
         CurrencyCode:'USD',
       //  success_url:process.env.SUCCESS_URL,
-        error_url: `${process.env.SERVER_URL}api/payment/errorUrl`,
+        error_url: `http://localhost:8001/api/payment/errorUrl`,
         test_mode:'',
         CstFName : "siva",
         CstEmail : "testing@gmail.com",
-        success_url :`${process.env.SERVER_URL}api/payment/successUrl/:${postId}/creator/:${cId}`
+        success_url :`http://localhost:8001/api/payment/successUrl/:${postId}/creator/:${cId}`
 
       })
       .then(async (response) =>{
@@ -212,7 +212,7 @@ const createBasicPayment = async (req, res, next) => {
             CstMobile,
             ProductTitle,
             creator 
-          })
+         })
 
       const url = response.data.paymentURL
       const sess = await mongoose.startSession();
@@ -329,6 +329,45 @@ let trackId = query.TrackID;
 
 //errorUrl
 const errorUrl = async (req , res,next) => {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
+  let orderID = query.OrderID;
+  let paymentId = query.PaymentID;
+  let result = query.Result;
+  let postDate = query.PostDate;
+  let tranId = query.TranID;
+  let ref = query.Ref;
+  let trackId = query.TrackID;
+
+   //  updating details based on order id saving payment and transaction id
+   let user;
+   try {
+     user = await Payment.findOneAndUpdate({ order_id : orderID});
+   } catch (err) {
+     const error = new HttpError(
+       'Something went wrong, could not update payment details. orderid saved for reference',
+       500
+     );
+     return next(error);
+   }
+ 
+   user.Result =  result;
+   user.TrackingId = trackId;
+   user.TranId = tranId;
+   user.Ref = ref;
+   user.PostDate = postDate;
+   user.PaymentID = paymentId;
+
+
+   try {
+    await user.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, couldnt update details of payment, but payment failed done ',
+      500
+    );
+    return next(error);
+  }
   res.redirect('/failed.html');
 
 }
