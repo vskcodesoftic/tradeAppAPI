@@ -51,5 +51,8 @@ router.post('/otpVerify',userController.otpVerify);
 router.post('/postItem', checkAuth ,fileUpload.single('image'),
 userController.createProduct);
 
+//get user Balance 
+router.get('/getBalance', checkAuth ,
+userController.getBalanceById);
 
 module.exports = router;

@@ -558,6 +558,32 @@ const getProductById = async (req, res, next) => {
   };
 
 
+//get  Balance
+const getBalanceById = async (req, res, next) => {
+  const userId = req.userData.userId;
+
+  let user;
+  try {
+      user  = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find a user.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError(
+      'Could not find a user for the provided id.',
+      404
+    );
+    return next(error);
+  }
+
+  res.json({ Balance :  user.Balance || 0 });
+};
+
 
 //user signup
 exports.createUser =  createUser;
@@ -581,3 +607,6 @@ exports.passwordResetotpLink = passwordResetotpLink;   //passwordd rest link usi
 
 //otp verify
 exports.otpVerify = otpVerify;
+
+//get Balance
+exports.getBalanceById = getBalanceById;
