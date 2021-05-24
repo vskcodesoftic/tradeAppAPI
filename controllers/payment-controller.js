@@ -257,7 +257,7 @@ let trackId = query.TrackID;
      //  updating details based on order id saving payment and transaction id
      let user;
      try {
-       user = await Payment.findOneAndUpdate({ order_id : orderID});
+       user = await Payment.findOneAndUpdate({ order_id : orderID},{ new : false} );
      } catch (err) {
        const error = new HttpError(
          'Something went wrong, could not update payment details. orderid saved for reference',
@@ -342,7 +342,7 @@ const errorUrl = async (req , res,next) => {
    //  updating details based on order id saving payment and transaction id
    let user;
    try {
-     user = await Payment.findOneAndUpdate({ order_id : orderID});
+     user = await Payment.findOneAndUpdate({ order_id : orderID},{new : false});
    } catch (err) {
      const error = new HttpError(
        'Something went wrong, could not update payment details. orderid saved for reference',
