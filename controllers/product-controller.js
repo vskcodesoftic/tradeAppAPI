@@ -145,10 +145,11 @@ const getFeaturedProductsList = async (req, res, next) => {
   //get products by creatorId(objectId of user)
 
   const getProductsByUserId = async (req, res, next) => {
-    const creator = req.params.uid;
 
-    // replace add userId login after auth protect 
-   // const creator = req.body;
+    //replace add userId login after auth protect 
+    const creator = req.userData.userId;
+
+    //const creator = "608a786244e074b5a4dcaec9"
   
     // let Products;
     let userWithProducts;
@@ -161,7 +162,6 @@ const getFeaturedProductsList = async (req, res, next) => {
       );
       return next(error);
     }
-  
     // if (!products || products.length === 0) {
     if (!userWithProducts || userWithProducts.inventory.length === 0) {
       return next(

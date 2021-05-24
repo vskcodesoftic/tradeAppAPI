@@ -5,6 +5,8 @@ const router = express.Router();
 
 const productController = require('../controllers/product-controller')
 
+const checkAuth = require('../middleware/authService');
+
 router.get('/', (req, res, next) => {
  
   res.json({message: 'productPage routes'});
@@ -20,7 +22,7 @@ router.get('/', (req, res, next) => {
  router.get('/category/:cid', productController.getProductsListbyCategory);
 
 //getproductsby id
-router.get('/:uid', productController.getProductsByUserId);
+router.get('/uid', checkAuth,  productController.getProductsByUserId);
 
 //getproductsby id
 router.get('/p/:pid', productController.getProductById);
