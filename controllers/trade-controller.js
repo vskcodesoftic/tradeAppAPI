@@ -54,6 +54,7 @@ const sendTradeRequest = async (req, res, next) => {
 
   // finding the productId of provided
   let product;
+
   try {
     product = await Product.findById(productId);
   } catch (err) {
@@ -73,6 +74,7 @@ const sendTradeRequest = async (req, res, next) => {
   }
 
   const creatorIdofUser = product.creator;
+
 //obtained creatorId from sliderProduct
 
   let user;
@@ -133,7 +135,7 @@ const sendTradeRequest = async (req, res, next) => {
     const productDescription = products.description;
     const productQuantity = products.quantity;
 
-    console.log("title :" + productTitle +" ,"+"desc :" +productDescription +" ,"+"quantity  :" + productQuantity)
+    console.log("title :" + productTitle +" ,"+"desc :" +productDescription +" ,"+"quantity   :" + productQuantity)
 
      message = `"your message : ${productTitle}, ${productDescription}"`
     console.log(message)
@@ -177,7 +179,7 @@ const sendTradeRequest = async (req, res, next) => {
     return next(error);
   }
    
-  res.json({ ProposedProductIds: await offeredProductId.pids, LoggedUserEmail: loggedUser.email });
+  res.json({  LoggedUserEmail: loggedUser.email , createdNotification : createdNotification });
 };
 
 
