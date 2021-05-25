@@ -9,7 +9,7 @@ const userSchema = new Schema({
     password: { type: String , required: true},
     country : {type : Number, required : true},
     countryTwoLetterCode : {type : String },
-
+    fcmToken : { type : String },
     phoneNumber : { type : Number, required : true},
     nationality : { type : String},
     country : { type : String},

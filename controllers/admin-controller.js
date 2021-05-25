@@ -401,7 +401,7 @@ const updatePlanById = async (req, res, next) => {
 
  //send push notification
  const sendNotification = async(req , res, next) => {
-  const {registratinToken}  = req.body;
+  const {registrationToken}  = req.body;
   const notification_options = {
     priority: "high",
     timeToLive: 60 * 60 * 24
@@ -410,12 +410,16 @@ const updatePlanById = async (req, res, next) => {
   const options =  notification_options
  
   var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-    to: `${registratinToken}`,
+    to: `${registrationToken}`,
 
-    notification: {
-        title: 'Title of your push notification', 
-        body: 'Body of your push notification' 
-    }
+    notification:  {
+            msg: 'riyaz send you request for iphone trade',
+            flag: 'IN',
+            nickname:'@riyaz shiekh',
+            type:'request',
+            senderId:'qweett',
+        }
+     
     
   
 }
