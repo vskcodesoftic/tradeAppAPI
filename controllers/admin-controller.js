@@ -10,6 +10,7 @@ const Banner = require('../models/banner-schema');
 const Advertisement = require('../models/advertisement-schema');
 const  Plan = require('../models/plans-schema');
 const Category = require('../models/category-schema');
+const FcmIds = require('../models/fcmids-schema');
 
 const HttpError = require('../middleware/http-error');
 
@@ -402,53 +403,49 @@ const updatePlanById = async (req, res, next) => {
  //send push notification
  const sendNotification = async(req , res, next) => {
 
+  const { msgToUser } = req.body;
+  const sendMulticast = async(fcmTokens, message) => {
 
+    var message = {
+        registration_ids: fcmTokens,
+        data: {
+            title: 'Finlit',
+            content: message.desc,
+        }
+    };
+    await fcm.send(message, function(err, response){
+        if (err) {
+          console.log(err)
+          res.json({message : response})
+        } else {
+            res.json({message : response})
+        }
+      })
+  }
+  
   let fcmTokens
   try{
-      fcmTokens = await User.find({ fcmToken : { $eq: 4 } })
+      fcmTokens = await FcmIds.find()
   }
   catch(err){
       const error = new HttpError("can not fetch fcms complete request",500)
       return next(error)
   }
-  
-  const {registrationToken}  = req.body;
-  const notification_options = {
-    priority: "high",
-    timeToLive: 60 * 60 * 24
-  };
-  
-  const options =  notification_options
- 
-//   var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-//     to: `${registrationToken}`,
 
-//     notification:  {
-//             msg: 'riyaz send you request for iphone trade',
-//             flag: 'IN',
-//             nickname:'@riyaz shiekh',
-//             type:'request',
-//             senderId:'qweett',
-//         }
-     
-    
-  
-// }
+  let fcmIds = [];
 
-// // Send a message to the device corresponding to the provided
-// // registration token.
+  let multifcmTokens= [] ;
+    fcmIds   = await  fcmTokens.map( fcmTokens => fcmTokens.fcmToken );
 
-// await fcm.send(message, function(err, response){
-//   if (err) {
-//     console.log(err)
-//     res.json({message : response})
-//   } else {
-//       res.json({message : response})
-//   }
-// })
+    multifcmTokens  = fcmIds
+  console.log(multifcmTokens)
+ // let fc= ["cZWNDhsmTEOikbvWpwcj0H:APA91bHeg305Q-8L5JBKOMl6fByY8QVAaOoiCHkGElsDm2zKK_iZkh_RgPc0CoIjNBWmi4sCrzCJNDFVyeRnYz6DUTx_wNmSSb2AvjLE5D1-hidBT4s-B5DcLvQbHnFe1Yz2sKO_JWLE","yZWNDhsmTEOikbvWpwcj0H:APA91bHeg305Q-8L5JBKOMl6fByY8QnvnvVAaOoiCHkGElsDm2zKK_iZkh_RgPc0CoIjNBWmi4sCrzCJNDFVyeRnYz6DUTx_wNmSSb2AvjLE5D1-hidBT4s-B5DcLvQbHnFe1Yz2sKO_JWLE","c"]
+var message = {
+  desc : msgToUser
+}
 
-  res.json({ fcmTokens : fcmTokens.map( fcmTokens => fcmTokens.toObject({ getters : true})) })
 
+sendMulticast(multifcmTokens, message)
  }
 
 
