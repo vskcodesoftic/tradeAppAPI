@@ -122,7 +122,7 @@ const  userLogin = async(req, res, next) => {
         return next(error)
     }
 
-    const { email,password } = req.body;
+    const { email,password , fcmToken } = req.body;
 
     let user
     try{
@@ -152,11 +152,32 @@ if(!isValidPassword){
     return next(error)
 }
 
+//fcm token verfication
+
+  try {
+
+    let updatedRecord = {
+      fcmToken: fcmToken
+  }
+
+    await  User.findByIdAndUpdate(user, { $set: updatedRecord },{new:true})
+
+  } catch (err) {
+    console.log(err)
+    const error = await new HttpError("fcmtoken updation failed, try again",500)
+    return next(error)
+  }
+  
+   
+   
+
 let token;
 try{
   token = await jwt.sign({
       userId : user.id,
-      email : user.email },
+      email : user.email,
+      fcmToken : fcmToken
+     },
       process.env.JWT_KEY,
       {expiresIn :'1h'}
       )
@@ -174,6 +195,7 @@ res.json({
     message : 'user logged in successful' , 
     userId : user.id,
     email : user.email , 
+    fcmToken : fcmToken,
     token: token})
 
 }
@@ -224,7 +246,7 @@ try{
  let founduser;
  founduser = await User.findOne({ email : email  })
   
- var updatedRecord = {
+ let updatedRecord = {
      password: hashedPassword
  }
 
