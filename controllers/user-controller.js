@@ -13,9 +13,11 @@ const {forgetHTML } = require('../tempalates/signUpHtml');
 const {generateOTP} = require('../util/genarateOtp');
 
 
-const { validationResult } = require('express-validator')
-const  User = require('../models/user-schema')
+const { validationResult } = require('express-validator');
+const  User = require('../models/user-schema');
 const  Product = require('../models/product-schema');
+const FcmIds = require('../models/fcmids-schema');
+
 const HttpError = require('../middleware/http-error');
 
 const { v1: uuid } = require('uuid')
@@ -152,14 +154,14 @@ if(!isValidPassword){
     return next(error)
 }
 
-//fcm token verfication
+
+//fcm token update on User Model
 
   try {
 
     let updatedRecord = {
       fcmToken: fcmToken
   }
-
     await  User.findByIdAndUpdate(user, { $set: updatedRecord },{new:true})
 
   } catch (err) {
@@ -168,7 +170,48 @@ if(!isValidPassword){
     return next(error)
   }
   
-   
+
+  //fcm token update on Fcm Model
+ let fcmUser =  await FcmIds.findOne({ email : email  })
+
+  const createdUser = new FcmIds({
+    name: user.name,
+    email : user.email,
+    fcmToken
+ 
+})
+ 
+// here we are updating fcmtoken on fcm model at first we check if user email exits or not if exits it means we have update the token 
+// if not we to create a new fcm documen in fcm model 
+
+if(!fcmUser) {
+try {
+  
+    createdUser.save()
+  
+} catch (err) {
+  console.log(err)
+    const error = await new HttpError("fcmtoken updation failed, try again",500)
+    return next(error)
+}
+
+}
+
+else if (fcmUser) {
+try {
+
+  let updatedRecord = {
+    fcmToken: fcmToken
+}
+
+  await  FcmIds.findByIdAndUpdate(fcmUser, { $set: updatedRecord },{new:true})
+
+} catch (err) {
+  console.log(err)
+  const error = await new HttpError("fcmtoken updation failed, try again",500)
+  return next(error)
+}
+}
    
 
 let token;
@@ -201,6 +244,7 @@ res.json({
 }
 
 //update password
+
 const  updateUserPassword = async(req, res, next) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()){
@@ -266,6 +310,7 @@ catch(err){
 
 
 // forget Password otp email verfication
+
 const forgetPassword = async (req, res) => {
   const { email } = req.body;
   if (email) {
@@ -302,6 +347,7 @@ const forgetPassword = async (req, res) => {
 
 
 //rest opt password -rest link using node mailer
+
 const passwordResetotpLink = async (req, res) => {
   crypto.randomBytes(32,(err,buffer)=>{
       if(err){
@@ -334,6 +380,7 @@ const passwordResetotpLink = async (req, res) => {
 
 
 //new password after reciveing link
+
 const newPassword = async(req,res)=>{
     const newPassword = req.body.password
     const sentToken = req.body.token
@@ -391,6 +438,7 @@ const newPassword = async(req,res)=>{
 
 
 // post product 
+
 const createProduct = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -516,9 +564,7 @@ const createProduct = async (req, res, next) => {
    
   };
   
-
-
-  //get products by creatorId(objectId of user)
+//get products by creatorId(objectId of user)
 
   const getProductsByUserId = async (req, res, next) => {
     const creator = req.params.uid;
@@ -552,6 +598,7 @@ const createProduct = async (req, res, next) => {
     });
   };
   
+
 //get product by id
 
 const getProductById = async (req, res, next) => {
@@ -581,6 +628,7 @@ const getProductById = async (req, res, next) => {
 
 
 //get  Balance
+
 const getBalanceById = async (req, res, next) => {
   const userId = req.userData.userId;
 

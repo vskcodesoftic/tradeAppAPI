@@ -401,6 +401,17 @@ const updatePlanById = async (req, res, next) => {
 
  //send push notification
  const sendNotification = async(req , res, next) => {
+
+
+  let fcmTokens
+  try{
+      fcmTokens = await User.find({ fcmToken : { $eq: 4 } })
+  }
+  catch(err){
+      const error = new HttpError("can not fetch fcms complete request",500)
+      return next(error)
+  }
+  
   const {registrationToken}  = req.body;
   const notification_options = {
     priority: "high",
@@ -409,34 +420,38 @@ const updatePlanById = async (req, res, next) => {
   
   const options =  notification_options
  
-  var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-    to: `${registrationToken}`,
+//   var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+//     to: `${registrationToken}`,
 
-    notification:  {
-            msg: 'riyaz send you request for iphone trade',
-            flag: 'IN',
-            nickname:'@riyaz shiekh',
-            type:'request',
-            senderId:'qweett',
-        }
+//     notification:  {
+//             msg: 'riyaz send you request for iphone trade',
+//             flag: 'IN',
+//             nickname:'@riyaz shiekh',
+//             type:'request',
+//             senderId:'qweett',
+//         }
      
     
   
-}
+// }
 
-// Send a message to the device corresponding to the provided
-// registration token.
+// // Send a message to the device corresponding to the provided
+// // registration token.
 
-await fcm.send(message, function(err, response){
-  if (err) {
-    console.log(err)
-    res.json({message : response})
-  } else {
-      res.json({message : response})
-  }
-})
+// await fcm.send(message, function(err, response){
+//   if (err) {
+//     console.log(err)
+//     res.json({message : response})
+//   } else {
+//       res.json({message : response})
+//   }
+// })
+
+  res.json({ fcmTokens : fcmTokens.map( fcmTokens => fcmTokens.toObject({ getters : true})) })
 
  }
+
+
 
   exports.createPlan =createPlan ;
   exports.getPlansList = getPlansList;
