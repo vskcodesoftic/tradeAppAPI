@@ -71,5 +71,16 @@ router.patch('/plans/p/:pid', adminController.updateProductVisiblity);
 //send firebasemessage push notification
 router.post('/firebase/notification'  , adminController.sendNotification);
 
+//get users count
+router.get('/getUsersCount', adminController.getUsersCount);
+
+//get products count
+router.get('/getProductsCount', adminController.getProductsCount);
+
+//get feautred products count
+router.get('/getFeauturedProductsCount', adminController.getFeauturedProductsCount);
+
+//get payments count
+router.get('/getPaymentsCount', adminController.getPaymentsCount);
 
 module.exports = router;

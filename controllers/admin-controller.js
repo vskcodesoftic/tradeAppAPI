@@ -8,6 +8,7 @@ const  User = require('../models/user-schema')
 const  Product = require('../models/product-schema')
 const Banner = require('../models/banner-schema');
 const Advertisement = require('../models/advertisement-schema');
+const Payment = require('../models/payments-schema');
 const  Plan = require('../models/plans-schema');
 const Category = require('../models/category-schema');
 const FcmIds = require('../models/fcmids-schema');
@@ -37,6 +38,75 @@ catch(err){
 res.json({ users : users.map( user => user.toObject({ getters : true})) })
 
 }
+
+//get users count
+const getUsersCount = async (req ,res ,next) => {
+
+
+  let users
+try{
+    users = await User.find().countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch users complete request",500)
+    return next(error)
+}
+res.json({ users : users})
+
+
+}
+
+//no of products
+const getProductsCount = async (req ,res ,next) => {
+
+
+  let products
+try{
+    products = await Product.find().countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch products complete request",500)
+    return next(error)
+}
+res.json({ products : products})
+
+
+}
+
+//no of feautured products
+const getFeauturedProductsCount = async (req ,res ,next) => {
+
+
+  let products
+try{
+    products = await Product.find({isFeatured : true }).countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch products complete request",500)
+    return next(error)
+}
+res.json({ products : products})
+
+
+}
+
+//no of Payments
+const getPaymentsCount = async (req ,res ,next) => {
+
+
+  let payments
+try{
+    payments = await Payment.find().countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch payments complete request",500)
+    return next(error)
+}
+res.json({ payments : payments})
+
+
+}
+
 
 //postBannerImages
 const postBannerImages = async (req ,res , next) => {
@@ -288,7 +358,7 @@ const updatePlan = async (req, res, next) => {
     res.status(200).json({ plan: plan.toObject({ getters: true }) });
   };
   
-
+//DELETE PLAN
   const deletePlan = async (req, res, next) => {
     const planId = req.params.pid;
     Plan.findByIdAndRemove(planId)
@@ -464,3 +534,7 @@ sendMulticast(multifcmTokens, message)
   exports.getUsersList = getUsersList;
   exports.updatePlanById = updatePlanById;
   exports.sendNotification = sendNotification;
+  exports.getUsersCount = getUsersCount;
+  exports.getProductsCount = getProductsCount;
+  exports.getFeauturedProductsCount = getFeauturedProductsCount;
+  exports.getPaymentsCount = getPaymentsCount;
