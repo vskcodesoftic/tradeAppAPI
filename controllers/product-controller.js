@@ -18,9 +18,17 @@ const getProductsList = async (req, res, next) => {
 
 //checking products expiry
 
+
+// the products which are featured but expired 15days since accpetance of trade  we are resttting isShow to true andd token to current date
+
   let product
   try{
-      product = await Product.find({expireToken:{$gt:Date.now()} , isShow : false })
+     // product = await Product.find({expireToken:{$lt:Date.now()} , isShow : false })
+     product = await Product.find({  $and: [
+      { $and: [  { expireToken : { $gt: Date.now()} } ] },
+      { $and: [ { isShow: false }, { isFeatured : true } ] }
+  ] })
+
   }
   catch(err){
       const error = new HttpError("can not fetch products complete request",500)
@@ -59,14 +67,20 @@ const getProductsList = async (req, res, next) => {
   }
  
   
-  products.isShow = "true"
-  products.expireToken = " "
+  // products.isShow = true
+  // products.expireToken = " "
+
+  let updatedRecord = {
+    isShow: true,
+    status : "active",
+    expireToken : null
+}
 
   //res.json({ title : pTtile})
   //products.isShow = "false";
   
     try {
-      await products.save();
+      await  Product.findByIdAndUpdate(products, { $set: updatedRecord },{new:true})
     } catch (err) {
       console.log(err)
       const error = new HttpError(
@@ -85,7 +99,7 @@ const getProductsList = async (req, res, next) => {
 
 let productsupdated
 try{
-    productsupdated = await Product.find({ isShow : true })
+    productsupdated = await Product.find({ isShow : true , isFeatured : true , status: "active", })
 }
 catch(err){
     const error = new HttpError("can not fetch products complete request",500)
