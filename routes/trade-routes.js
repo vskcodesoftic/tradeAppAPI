@@ -16,6 +16,7 @@ router.post('/sendTradeRequest', checkAuth ,tradeController.sendTradeRequest)
 
 router.get('/acceptTrade:/:id' ,tradeController.acceptTrade)
 
+router.post('/confirmTrade',tradeController.confirmTradeRequest);
 
 
 module.exports = router;

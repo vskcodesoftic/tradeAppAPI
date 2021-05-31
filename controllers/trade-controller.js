@@ -4,11 +4,15 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 
+
+
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user-schema");
 const Product = require("../models/product-schema");
 const Notification = require('../models/notifications-schema')
+
+
 
 const HttpError = require("../middleware/http-error");
 
@@ -28,7 +32,10 @@ const sendTradeRequest = async (req, res, next) => {
   let message 
   //user who has loggedin
   const loggedUser = req.userData;
-
+  const fcmTokenOfLoggedUser = req.userData.fcmToken;
+ 
+   console.log(fcmTokenOfLoggedUser)
+   
   const {
     userproductId,
     offeredProductId,
@@ -103,10 +110,10 @@ const sendTradeRequest = async (req, res, next) => {
   const PrdNationality = await user.nationality
   const PrdNickname = await user.nickname
 
+  const FcmTokenofBuser = await user.fcmToken;
 
 
-
-
+   console.log("buser" +FcmTokenofBuser);
 
   // offered Products 
   let offrdProducts  = await offeredProductId.pids
@@ -275,5 +282,15 @@ try {
 
 }
 
+
+
+const confirmTradeRequest = async = (req, res ,next) => {
+
+ res.json({ message : " confirm trade"})
+}
+
+
+
 exports.sendTradeRequest = sendTradeRequest;
 exports.acceptTrade = acceptTrade;
+exports.confirmTradeRequest =confirmTradeRequest;

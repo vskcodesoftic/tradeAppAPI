@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema({
     title: { type: String },
-    message: { type: String },
+    message:  [Schema.Types.Mixed],
     senderName :{ type: String},
     userproductId : { type : String},
     userEmail : { type : String },

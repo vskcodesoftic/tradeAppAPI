@@ -7,6 +7,7 @@ const adminController = require('../controllers/admin-controller')
 
 const fileUpload = require('../middleware/file-upload');
 
+const checkAuth = require('../middleware/authService');
 
 router.get('/', (req, res, next) => {
  
@@ -82,5 +83,7 @@ router.get('/getFeauturedProductsCount', adminController.getFeauturedProductsCou
 
 //get payments count
 router.get('/getPaymentsCount', adminController.getPaymentsCount);
+
+router.post('/test', checkAuth , adminController.sendDualTradeNotification);
 
 module.exports = router;
