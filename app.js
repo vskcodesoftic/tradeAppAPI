@@ -42,6 +42,9 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json())
 //routes
 
+//static serving
+app.use(express.static('public'));
+
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -55,8 +58,6 @@ app.use((req, res, next) => {
 });
 
 
-// set public directory to serve static html files 
-app.use('/', express.static(path.join(__dirname, 'public'))); 
 
 // set public directory to serve static html files 
 app.use('/public', express.static(path.join(__dirname, 'public'))); 
