@@ -69,9 +69,6 @@ router.patch(
 //updateproduct visiblity
 router.patch('/plans/p/:pid', adminController.updateProductVisiblity);
 
-//send firebasemessage push notification
-router.post('/firebase/notification'  , adminController.sendNotification);
-
 //get users count
 router.get('/getUsersCount', adminController.getUsersCount);
 
@@ -84,6 +81,5 @@ router.get('/getFeauturedProductsCount', adminController.getFeauturedProductsCou
 //get payments count
 router.get('/getPaymentsCount', adminController.getPaymentsCount);
 
-router.post('/test', checkAuth , adminController.sendDualTradeNotification);
 
 module.exports = router;

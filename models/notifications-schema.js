@@ -15,6 +15,11 @@ const notificationSchema = new Schema({
      productOfferedNickname : { type : String},
      productsOffered : [Schema.Types.Mixed],
      productOfferedEmail : { type : String},
+     productOfferedFcmToken : { type : String},
+     selectedUserFcmToken : { type : String},
+
+
+
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
 });
 

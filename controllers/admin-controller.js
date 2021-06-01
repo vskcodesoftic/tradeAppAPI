@@ -11,19 +11,12 @@ const Advertisement = require('../models/advertisement-schema');
 const Payment = require('../models/payments-schema');
 const  Plan = require('../models/plans-schema');
 const Category = require('../models/category-schema');
-const FcmIds = require('../models/fcmids-schema');
-const Notification = require('../models/notifications-schema')
+
 
 const HttpError = require('../middleware/http-error');
 
 const { v1: uuid } = require('uuid')
 
-const FCM = require('fcm-node')
-
-
-const serverKey = require('../firebase/config/firebasecred.json') //put the generated private key path here    
-    
-const fcm = new FCM(serverKey)
 
 //get list of users
 const getUsersList = async(req, res, next) => {
@@ -471,273 +464,9 @@ const updatePlanById = async (req, res, next) => {
 
 };
 
- //send push notification
- const sendNotification = async(req , res, next) => {
-
-  const  { msgToUser }  =  req.body;
-  const sendMulticast = async(fcmTokens, message) => {
-
-    var message = {
-        registration_ids: fcmTokens,
-        notification: {
-            title: msgToUser,
-            content: msgToUser,
-        }
-    };
-    await fcm.send(message, function(err, response){
-        if (err) {
-          console.log(err)
-          res.json({message : response})
-        } else {
-            res.json({message : response})
-        }
-      })
-  }
-  
-  let fcmTokens
-  try{
-      fcmTokens = await FcmIds.find()
-  }
-  catch(err){
-      const error = new HttpError("can not fetch fcms complete request",500)
-      return next(error)
-  }
-
-  let fcmIds = [];
-
-  let multifcmTokens= [] ;
-    fcmIds   = await  fcmTokens.map( fcmTokens => fcmTokens.fcmToken );
-
-    multifcmTokens  = fcmIds
-  console.log(multifcmTokens)
- // let fc= ["cZWNDhsmTEOikbvWpwcj0H:APA91bHeg305Q-8L5JBKOMl6fByY8QVAaOoiCHkGElsDm2zKK_iZkh_RgPc0CoIjNBWmi4sCrzCJNDFVyeRnYz6DUTx_wNmSSb2AvjLE5D1-hidBT4s-B5DcLvQbHnFe1Yz2sKO_JWLE","yZWNDhsmTEOikbvWpwcj0H:APA91bHeg305Q-8L5JBKOMl6fByY8QnvnvVAaOoiCHkGElsDm2zKK_iZkh_RgPc0CoIjNBWmi4sCrzCJNDFVyeRnYz6DUTx_wNmSSb2AvjLE5D1-hidBT4s-B5DcLvQbHnFe1Yz2sKO_JWLE","c"]
-var message = {
-  to : `${multifcmTokens}` ,
-  notification: {
-  desc : msgToUser
-  }
-
-}
 
 
-sendMulticast(multifcmTokens, message)
- }
-
-
-
- //product trade request
- const sendDualTradeNotification = async (req ,res ,next) => {
-
-  const {
-    userproductId,
-    offeredProductId,
-    senderId,
-    senderName,
-    senderNationality,
-    productsOffered,
-  } = req.body;
-
-
-
-  //user logged data
-  const LoggedUser = req.userData;
-  const LoggedUserID = req.userData.userId;
-
-  console.log(LoggedUser.email)
-
-  const LoggedUserFcmToken = LoggedUser.fcmToken;
-
-  let user;
-  try {
-      user = await User.findById(LoggedUserID);
-    }
-       catch (err) {
-    const error = new HttpError('Creating product failedl, please try again', 500);
-    console.log("error ")
-    return next(error);
-  }
-
-  if (!user) {
-    const error = new HttpError('Could not find user for provided id', 404);
-    return next(error);
-  }
-  
- const LoggedUserName = user.name;
- const LoggedUserCountry = user.country;
-
- //
-
-
-  
- const productId = userproductId; //(objectidofproduct)
- //the userProduct to whom he wanna offer trade (single id of product from slider)
-
-
-// finding the productId of provided
-let product;
-
-try {
-  product = await Product.findById(productId);
-} catch (err) {
-  const error = new HttpError(
-    "Something went wrong, could not find a product.",
-    500
-  );
-  return next(error);
-}
-
-if (!product) {
-  const error = new HttpError(
-    "Could not find a product for the provided id.",
-    404
-  );
-  return next(error);
-}
-
-const SelectedUserId = product.creator;
-const SelectedProductTitle = product.title;
-
-
-
-
-
-
-//obtained creatorId from sliderProduct
-
-let SelectedUser;
-try {
-  SelectedUser = await User.findById(SelectedUserId);
-} catch (err) {
-  const error = new HttpError(
-    "Something went wrong, could not find a user.",
-    500
-  );
-  return next(error);
-}
-
-if (!SelectedUser) {
-  const error = new HttpError(
-    "Could not find a user for the provided id.",
-    404
-  );
-  return next(error);
-}
-
-
-
-const SelectedUserEmail = await SelectedUser.email
-const SelectedUserCountry = await SelectedUser.country
-const SelectedUserNationality = await SelectedUser.nationality
-const SelectedUserNickname = await SelectedUser.nickname
-
-const SelectedUserFcmToken = await SelectedUser.fcmToken
-
-  let fcmToken = [];
-   fcmToken.push(`${LoggedUserFcmToken}`);
-
-
-  var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-    to: `${SelectedUserFcmToken}`,
-    
-    notification: {
-        title: `hi , ${SelectedUserNickname} you have Recived Trade Request from ${LoggedUserName}` , 
-        body: `Product requested for Trade :  ${SelectedProductTitle} Accept Trade Request to know more `
-    },
-    
-};
-
-
-let productIds = await {offeredProductId}
-//ProposedProductIdbyLoggedUser =  productIds.push(`${offeredProductId}`);;
-ProposedProductIdbyLoggedUser = await productIds;
-
-
-
-fcm.send(message, function(err, response){
-  if (err) {
-      console.log("Something has gone wrong!",err);
-  } else {
-      
-      console.log("Successfully sent with response: ", response);
-  }
-});
-
-
- // offered Products 
- let offrdProducts  = await offeredProductId.pids
-  let msg = [];
- for (const productOffrd in offrdProducts) {
-  // console.log(`${prduct}: ${ds[prduct]}`);
-   let products;
-   try {
-     products = await Product.findById(`${offrdProducts[productOffrd]}`);
-   } catch (err) {
-     const error = new HttpError(
-       "Something went wrong, could not find a product.",
-       500
-     );
-     return next(error);
-   }
- 
-   if (!products) {
-     const error = new HttpError(
-       "Could not find a product for the provided id.",
-       404
-     );
-     return next(error);
-   }
-   const productTitle = products.title;
-   const productDescription = products.description;
-   const productQuantity = products.quantity;
-
-   //console.log("title :" + productTitle +" ,"+"desc :" +productDescription +" ,"+"quantity   :" + productQuantity)
-
-   let details = `"offered products are ${productTitle} ,desc : ${productDescription} ,quantity   : ${productQuantity}"`
-
-    message = `"your message : ${productTitle}, ${productDescription}"`
-
-    msg.push(details)
-
- }
- await console.log(msg)
-
- //sendingNotification
- const createdNotification = new Notification({
-   message : [msg],
-   creator: LoggedUserID,
-   productsOffered : [offrdProducts],
-   userproductId ,
-   productOfferedEmail  :  LoggedUser.email,   //offer recived by email
-   productOfferedNationality :   SelectedUserNationality,
-   productOfferedCountry : SelectedUserCountry,
-   productOfferedNickname : SelectedUserEmail,
-   userEmail : LoggedUser.email,
-
- });
-
- try {
-   const sess = await mongoose.startSession();
-   sess.startTransaction();
-   await createdNotification.save({ session: sess });
-   SelectedUser.notifications.push(createdNotification);
-   await SelectedUser.save({ session: sess });
-   await sess.commitTransaction();
-
-
-
-
- } catch (err) {
-     console.log(err)
-   const error = new HttpError(
-     'Creating notfication failed, please try again.',
-     500
-   );
-   return next(error);
- }
-
- res.json({message : 'testing'})
-}
-  exports.createPlan =createPlan ;
+  exports.createPlan = createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;
   exports.deletePlan = deletePlan;
@@ -750,9 +479,8 @@ fcm.send(message, function(err, response){
   exports.getCategories = getCategories;
   exports.getUsersList = getUsersList;
   exports.updatePlanById = updatePlanById;
-  exports.sendNotification = sendNotification;
   exports.getUsersCount = getUsersCount;
   exports.getProductsCount = getProductsCount;
   exports.getFeauturedProductsCount = getFeauturedProductsCount;
   exports.getPaymentsCount = getPaymentsCount;
-  exports.sendDualTradeNotification = sendDualTradeNotification;
+ 
