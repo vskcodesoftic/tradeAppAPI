@@ -242,11 +242,56 @@ const acceptTrade = async (req, res ,next) => {
    // offered Products 
    let offrdProducts  = await  notification.productsOffered;
      let ProductIds=[];
-     ProductIds.push(`${userProduct}`);
+ 
+      
+    await ProductIds.push(`${userProduct}`);
+
+    //finding userby product id
+    
+    let userproduct;
+    try {
+        userproduct  = await Product.findById(userProduct);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not find a product.',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!userproduct) {
+      const error = new HttpError(
+        'Could not find a product for the provided id.',
+        404
+      );
+      return next(error);
+    }
+  
+   //setting product expiry 15days
+userproduct.isShow = "false";
+userproduct.isFeatured="false";
+userproduct.status="notConfirmed";
+userproduct.expireToken = Date.now() + 1297000000
+  
+    try {
+      await userproduct.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not update the  product.',
+        500
+      );
+      return next(error);
+    }
+
+
+  //second stage updating status of offrered products
+  
 
     for (const [key, value] of Object.entries(offrdProducts[0])) {
       ProductIds.push(`${value}`)
-          
+
+   
+      
 //updating status of offered products
 let product;
 try {
@@ -282,7 +327,7 @@ try {
   
     }
 
- res.json({ Productids : ProductIds , message : "isShow status updates to false  and product expiry to 15days"})
+ res.json({ Productids : ProductIds , message : "isShow,status,isFeautured  status updated to false  and product expiry to 15days"})
 
 
 }
