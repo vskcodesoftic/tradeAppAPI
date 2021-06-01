@@ -20,6 +20,7 @@ router.get('/confirmTrade/:id',checkAuth ,tradeController.confirmTradeRequest);
 
 router.post('/sendTradeRequest', checkAuth , tradeController.sendDualTradeNotification);
 
+router.get('/rejectTradeRequest/:id', checkAuth , tradeController.rejectTradeRequest);
 
 //send firebasemessage push notification
 router.post('/firebase/notification'  , tradeController.sendNotification);
