@@ -15,6 +15,8 @@ const {generateOTP} = require('../util/genarateOtp');
 
 const { validationResult } = require('express-validator');
 const  User = require('../models/user-schema');
+const  Notification = require('../models/notifications-schema');
+
 const  Product = require('../models/product-schema');
 const FcmIds = require('../models/fcmids-schema');
 
@@ -655,6 +657,57 @@ const getBalanceById = async (req, res, next) => {
 };
 
 
+
+//get notifaction by userId
+const getNotificationsByUserID = async (req ,res ,next ) => {
+  const userId = req.userData.userId;
+
+  let user;
+  try {
+      user  = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find a user.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError(
+      'Could not find a user for the provided id.',
+      404
+    );
+    return next(error);
+  }
+ 
+   
+  let userWithNotifications;
+  try {
+    userWithNotifications = await User.findById(user).populate('notifications');
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching notifications failed, please try again later',
+      500
+    );
+    return next(error);
+  }
+  // if (!products || products.length === 0) {
+  if (!userWithNotifications || userWithNotifications.notifications.length === 0) {
+    return next(
+      new HttpError('Could not find notifications for the provided user id.', 404)
+    );
+  }
+
+  res.json({
+    notifications: userWithNotifications.notifications.map(notification =>
+      notification.toObject({ getters: true })
+    )
+  });
+
+
+}
+
 //user signup
 exports.createUser =  createUser;
 //user login
@@ -680,3 +733,6 @@ exports.otpVerify = otpVerify;
 
 //get Balance
 exports.getBalanceById = getBalanceById;
+
+//get notfication by userId
+exports.getNotificationsByUserID = getNotificationsByUserID;

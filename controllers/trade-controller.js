@@ -340,7 +340,7 @@ const confirmTradeRequest = async = (req, res ,next) => {
 }
 
 
- //send push notification
+ //send push notification to all users
  const sendNotification = async(req , res, next) => {
 
   const  { msgToUser }  =  req.body;
