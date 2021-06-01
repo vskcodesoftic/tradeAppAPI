@@ -332,14 +332,6 @@ try {
 
 }
 
-
-
-const confirmTradeRequest = async = (req, res ,next) => {
-
- res.json({ message : " confirm trade"})
-}
-
-
  //send push notification to all users
  const sendNotification = async(req , res, next) => {
 
@@ -611,7 +603,137 @@ fcm.send(message, function(err, response){
  res.json({message : 'trade request sent ', Traderequest : createdNotification })
 }
 
+//confirm trade request
+const confirmTradeRequest = async (req, res ,next) => {
+  //userid of logged in user
+  const userId = req.userData.userId;
+   
+  const  notificationID =  req.params.id; 
+  //let productIds = []
+  //let productIds = await {offeredProductId}
+  
 
+  // finding the productId of provided
+  let notification;
+  try {
+    notification = await Notification.findById(notificationID);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not find a notification.",
+      500
+    );
+    return next(error);
+  }
+
+  if (!notification) {
+    const error = new HttpError(
+      "Could not find a notification for the provided id.",
+      404
+    );
+    return next(error);
+  }
+
+
+   // user single Products
+   const userProduct  = await  notification.userproductId;
+   // offered Products 
+   let offrdProducts  = await  notification.productsOffered;
+     let ProductIds=[];
+ 
+      
+    await ProductIds.push(`${userProduct}`);
+
+    //finding userby product id
+    
+    let userproduct;
+    try {
+        userproduct  = await Product.findById(userProduct);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not find a product.',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!userproduct) {
+      const error = new HttpError(
+        'Could not find a product for the provided id.',
+        404
+      );
+      return next(error);
+    }
+  
+   //setting product expiry to null
+    userproduct.isShow = "false";
+    userproduct.isFeatured="false";
+    userproduct.status="Confirmed";
+    userproduct.expireToken = null
+      
+    try {
+      await userproduct.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not update the  product.',
+        500
+      );
+      return next(error);
+    }
+
+
+     //second
+      
+    for (const [key, value] of Object.entries(offrdProducts[0])) {
+      ProductIds.push(`${value}`)
+
+   
+            
+      //updating status of offered products
+      let product;
+      try {
+        product = await Product.findById(`${value}`);
+      } catch (err) {
+        console.log(err)
+        const error = new HttpError(
+          'Something went wrong, could not found to  update product.',
+          500
+        );
+        return next(error);
+      }
+
+      //setting product expiry 15days
+      product.isShow = "false";
+      product.isFeatured="false";
+      product.status="Confirmed";
+      product.expireToken = null
+
+      try {
+        await product.save();
+      } catch (err) {
+        console.log(err)
+        const error = new HttpError(
+          'Something went wrong, could not update the product.',
+          500
+        );
+        return next(error);
+      }
+
+        
+
+  
+    }
+
+     
+
+
+  res.json({ message : " trade confirmed sucessfully! " ,notification : notification})
+
+
+
+ 
+
+ }
+ 
 
 
 //exports.sendTradeRequest = sendTradeRequest;
