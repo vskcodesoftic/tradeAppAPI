@@ -56,7 +56,7 @@ router.get('/getBalance', checkAuth ,
 userController.getBalanceById);
 
 //get notifications by userId 
-router.get('/getNotificationBuUserId', checkAuth ,
+router.get('/getNotificationByUserId', checkAuth ,
 userController.getNotificationsByUserID);
 
 module.exports = router;
