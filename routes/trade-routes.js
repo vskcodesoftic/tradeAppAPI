@@ -16,7 +16,7 @@ router.get('/', (req, res, next) => {
 
 router.get('/acceptTrade/:id' ,tradeController.acceptTrade);
 
-router.post('/confirmTrade/:id',checkAuth ,tradeController.confirmTradeRequest);
+router.get('/confirmTrade/:id',checkAuth ,tradeController.confirmTradeRequest);
 
 router.post('/sendTradeRequest', checkAuth , tradeController.sendDualTradeNotification);
 
