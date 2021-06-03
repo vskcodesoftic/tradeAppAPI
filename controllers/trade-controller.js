@@ -216,7 +216,8 @@ const acceptTrade = async (req, res ,next) => {
   //let productIds = []
   //let productIds = await {offeredProductId}
   
-
+  let senderId;
+  let singleSenderId;
   // finding the productId of provided
   let notification;
   try {
@@ -237,8 +238,28 @@ const acceptTrade = async (req, res ,next) => {
     return next(error);
   }
 
+ 
+  //changinging isRead to true , type : accepted
+
+  notification.isRead = true;
+  notification.type = 'accepted';
+
+ try {
+      await notification.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not update the  notification.',
+        500
+      );
+      return next(error);
+    }
+
+    const notificationType = notification.type;
+    const notificationIsRead = notification.isRead;
+
+
    // user single Products
-      const userProduct  = await  notification.userproductId;
+      const userProduct  = await  notification.productID;
    // offered Products 
    let offrdProducts  = await  notification.productsOffered;
      let ProductIds=[];
@@ -246,7 +267,7 @@ const acceptTrade = async (req, res ,next) => {
       
     await ProductIds.push(`${userProduct}`);
 
-    //finding userby product id
+    //finding userby product id single product
     
     let userproduct;
     try {
@@ -272,7 +293,9 @@ userproduct.isShow = "false";
 userproduct.isFeatured="false";
 userproduct.status="notConfirmed";
 userproduct.expireToken = Date.now() + 1297000000
-  
+
+
+ singleSenderId = userproduct.creator ;
     try {
       await userproduct.save();
     } catch (err) {
@@ -282,6 +305,8 @@ userproduct.expireToken = Date.now() + 1297000000
       );
       return next(error);
     }
+
+
 
 
   //second stage updating status of offrered products
@@ -311,6 +336,8 @@ product.isFeatured="false";
 product.status="notConfirmed";
 product.expireToken = Date.now() + 1297000000
 
+ senderId= product.creator;
+
 try {
   await product.save();
 } catch (err) {
@@ -327,7 +354,86 @@ try {
   
     }
 
- res.json({ Productids : ProductIds , message : "isShow,status,isFeautured  status updated to false  and product expiry to 15days"})
+   
+
+    //finding user by SENDERID of user who is offering products
+       
+    let user;
+    try {
+        user  = await User.findById(senderId);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not find a USER.',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!user) {
+      const error = new HttpError(
+        'Could not find a user for the provided id.',
+        404
+      );
+      return next(error);
+    }
+  
+    const UserNickname = user.nickname;
+    const UserFcmToken = user.fcmToken;
+    console.log(senderId)
+
+
+  //finding user who recived request
+
+    let userWhoRecivedRequest;
+    try {
+      userWhoRecivedRequest  = await User.findById(singleSenderId);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not find a USER.',
+        500
+      );
+      return next(error);
+    }
+  
+    if (!userWhoRecivedRequest) {
+      const error = new HttpError(
+        'Could not find a user for the provided id.',
+        404
+      );
+      return next(error);
+    }
+  
+    const senderUserNickname = userWhoRecivedRequest.nickname;
+    
+
+
+  var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+    to: `${UserFcmToken}`,
+    
+    notification: {
+        title: `hi , ${UserNickname} your Trade Request has been accepted ` , 
+        body: `You can now Intiate the Chat with ${senderUserNickname}, to know more `
+    },
+    
+};
+
+
+
+
+fcm.send(message, function(err, response){
+  if (err) {
+      console.log("Something has gone wrong!",err);
+  } else {
+      
+      console.log("Successfully sent with response: ", response);
+  }
+});
+
+
+    
+
+
+ res.json({ Productids : ProductIds , message : `hi , ${UserNickname} your Trade Request has been accepted` , type :notificationType , isRead : notificationIsRead})
 
 
 }
@@ -390,7 +496,7 @@ sendMulticast(multifcmTokens, message)
  const sendDualTradeNotification = async (req ,res ,next) => {
 
   const {
-    productID,   // USERpRODUCTiD
+    productID,   // productID
     offeredProductId,
     senderId,
     senderName,
@@ -638,7 +744,7 @@ const confirmTradeRequest = async (req, res ,next) => {
 
 
    // user single Products
-   const userProduct  = await  notification.userproductId;
+   const userProduct  = await  notification.productID;
    // offered Products 
    let offrdProducts  = await  notification.productsOffered;
      let ProductIds=[];

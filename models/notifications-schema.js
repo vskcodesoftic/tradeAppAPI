@@ -8,7 +8,7 @@ const notificationSchema = new Schema({
     title: { type: String },
     message:  [Schema.Types.Mixed],
     senderName :{ type: String},
-    userproductId : { type : String},
+    productID : { type : String},
     userEmail : { type : String },
      productOfferedNationality: { type : String},
      productOfferedCountry : { type : String},
