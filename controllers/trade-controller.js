@@ -390,7 +390,7 @@ sendMulticast(multifcmTokens, message)
  const sendDualTradeNotification = async (req ,res ,next) => {
 
   const {
-    userproductId,
+    productID,   // USERpRODUCTiD
     offeredProductId,
     senderId,
     senderName,
@@ -425,14 +425,15 @@ sendMulticast(multifcmTokens, message)
   
  const LoggedUserName = user.name;
  const LoggedUserCountry = user.country;
+ const LoggedUserCountryCode = user.countryTwoLetterCode;
  const LoggedUserNickname = user.nickname;
- const LoggedUserNation = user.nationality;
+ const LoggedUserNation = user.nationality
 
  //
 
 
   
- const productId = userproductId; //(objectidofproduct)
+ const productId = productID; //(objectidofproduct)
  //the userProduct to whom he wanna offer trade (single id of product from slider)
 
 
@@ -492,6 +493,7 @@ const SelectedUserEmail = await SelectedUser.email
 const SelectedUserCountry = await SelectedUser.country
 const SelectedUserNationality = await SelectedUser.nationality
 const SelectedUserNickname = await SelectedUser.nickname
+const SelectedUserCountryCode = await SelectedUser.countryTwoLetterCode
 
 const SelectedUserFcmToken = await SelectedUser.fcmToken
 
@@ -570,14 +572,14 @@ fcm.send(message, function(err, response){
    message : [msg],
    creator: LoggedUserID,
    productsOffered : [offrdProducts],
-   userproductId ,
+   productID ,
+   type : 'tradeRequest',
    productOfferedEmail  :  LoggedUser.email,   //offer recived by email
-   productOfferedNationality :   LoggedUserNation,
-   productOfferedCountry : LoggedUserCountry,
-   productOfferedNickname : LoggedUserNickname,
-   productOfferedFcmToken : LoggedUserFcmToken,
-   selectedUserFcmToken : SelectedUserFcmToken
-
+   nickname : LoggedUserNickname,
+   userFcmToken : LoggedUserFcmToken,
+   selectedUserFcmToken : SelectedUserFcmToken,
+   senderId: LoggedUserID,
+   flag :LoggedUserCountryCode
  });
 
  try {
@@ -609,6 +611,7 @@ const confirmTradeRequest = async (req, res ,next) => {
   const userId = req.userData.userId;
    
   const  notificationID =  req.params.id; 
+  
   //let productIds = []
   //let productIds = await {offeredProductId}
   
@@ -680,6 +683,8 @@ const confirmTradeRequest = async (req, res ,next) => {
       return next(error);
     }
 
+     
+    
 
      //second
       
@@ -717,25 +722,16 @@ const confirmTradeRequest = async (req, res ,next) => {
         );
         return next(error);
       }
+      
 
-        
-
-  
     }
 
-     
-
-
   res.json({ message : " trade confirmed sucessfully! " ,notification : notification})
-
-
-
- 
 
  }
  
 
- // reject 
+ // Reject Trade Request 
  const rejectTradeRequest = async (req, res ,next) => {
 
    //userid of logged in user

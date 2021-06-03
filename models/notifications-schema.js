@@ -12,11 +12,16 @@ const notificationSchema = new Schema({
     userEmail : { type : String },
      productOfferedNationality: { type : String},
      productOfferedCountry : { type : String},
-     productOfferedNickname : { type : String},
+     nickname : { type : String},
      productsOffered : [Schema.Types.Mixed],
      productOfferedEmail : { type : String},
-     productOfferedFcmToken : { type : String},
+     userFcmToken : { type : String},
      selectedUserFcmToken : { type : String},
+     flag : { type : String},
+     type: { type : String},
+     senderId: { type : String},
+     isRead : { type : Boolean, default : 'false'},
+
 
 
 
