@@ -742,6 +742,19 @@ const confirmTradeRequest = async (req, res ,next) => {
     return next(error);
   }
 
+  notification.isRead ="true";
+  notification.type ="Confirmed";
+
+  try {
+    await notification.save();
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not update the notification isRead and type.',
+      500
+    );
+    return next(error);
+  }
 
    // user single Products
    const userProduct  = await  notification.productID;
@@ -868,9 +881,24 @@ const confirmTradeRequest = async (req, res ,next) => {
      return next(error);
    }
  
+   
+   notification.isRead ="true";
+   notification.type ="Declined";
  
+   try {
+     await notification.save();
+   } catch (err) {
+     console.log(err)
+     const error = new HttpError(
+       'Something went wrong, could not update the notification isRead and type.',
+       500
+     );
+     return next(error);
+   }
+ 
+
     // user single Products
-    const userProduct  = await  notification.userproductId;
+    const userProduct  = await  notification.productID;
     // offered Products 
     let offrdProducts  = await  notification.productsOffered;
       let ProductIds=[];
@@ -893,7 +921,7 @@ const confirmTradeRequest = async (req, res ,next) => {
    
      if (!userproduct) {
        const error = new HttpError(
-         'Could not find a product for the provided id.',
+         'Could not find a product for theff provided id.',
          404
        );
        return next(error);
@@ -940,6 +968,7 @@ const confirmTradeRequest = async (req, res ,next) => {
        product.isFeatured="true";
        product.status="active";
  
+
        try {
          await product.save();
        } catch (err) {
@@ -952,7 +981,11 @@ const confirmTradeRequest = async (req, res ,next) => {
        }
    
      }
-   res.json({ message : 'trade request declined'})
+
+
+   
+
+   res.json({ message : 'trade request declined', type : notification.type , flag : notification.flag ,isRead : notification.isRead })
  }
 
 
