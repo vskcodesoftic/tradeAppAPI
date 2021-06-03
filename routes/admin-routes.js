@@ -16,6 +16,13 @@ router.get('/', (req, res, next) => {
 
 
 
+//admin login
+router.post('/login',adminController.adminLogin);
+
+//admin signup
+router.post('/auth/create',adminController.createAdmin);
+
+
 //get list of products
 router.get('/usersList', adminController.getUsersList);
 
