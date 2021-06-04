@@ -310,7 +310,7 @@ userproduct.expireToken = Date.now() + 1297000000
 
 
   //second stage updating status of offrered products
-  
+  try{
 
     for (const [key, value] of Object.entries(offrdProducts[0])) {
       ProductIds.push(`${value}`)
@@ -354,7 +354,14 @@ try {
   
     }
 
-   
+  }
+  catch (err) {
+    const error = new HttpError(
+      'Something went wrong. in updating offered products status',
+      500
+    );
+    return next(error);
+  }
 
     //finding user by SENDERID of user who is offering products
        
