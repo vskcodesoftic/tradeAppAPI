@@ -335,7 +335,7 @@ const deleteBannerImageById = async (req, res, next) => {
 //Delete Banner Images ById
 const deleteAddsImageById = async (req, res, next) => {
   const AddsId = req.params.aid;
-  Banner.findByIdAndRemove(AddsId)
+  Advertisement.findByIdAndRemove(AddsId)
   .then((result) => {
     res.json({
       success: true,
