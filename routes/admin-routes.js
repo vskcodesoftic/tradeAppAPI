@@ -1,6 +1,9 @@
 const express = require('express');
 const { check } = require('express-validator')
 
+var multer  = require('multer');
+var path  = require('path');
+
 const router = express.Router();
 
 const adminController = require('../controllers/admin-controller')
@@ -9,10 +12,6 @@ const fileUpload = require('../middleware/file-upload');
 
 const checkAuth = require('../middleware/authService');
 
-router.get('/', (req, res, next) => {
- 
-  res.json({message: 'admin page routes'});
-});
 
 
 
@@ -28,10 +27,13 @@ router.get('/usersList', adminController.getUsersList);
 
 
 //postBannerImages
-router.post('/banner/addImages', fileUpload.single('image'), adminController.postBannerImages);
+router.post('/banner/addImages',  fileUpload.single('image'), adminController.postBannerImages);
 
 //getImages
 router.get('/banner/getImages', adminController.getBannerImages);
+
+//delete Banner images by id
+router.delete('/banner/:bid', adminController.deleteBannerImageById);
 
 //postAdvertisementImages
 router.post('/adds/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);

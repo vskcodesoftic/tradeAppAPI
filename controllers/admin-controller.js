@@ -278,7 +278,7 @@ const postBannerImages = async (req ,res , next) => {
   const createdBanner = new Banner({
     title,
     description,
-    image : req.file.path ,
+    image: req.file.path,
     isFeatured,
     isShow,
   });
@@ -310,6 +310,26 @@ const getBannerImages = async (req, res ,next) => {
   }
   res.json({ bannerImages : BannerImages.map( Banner => Banner.toObject({ getters : true}))})
 }
+
+//Delete Banner Images ById
+const deleteBannerImageById = async (req, res, next) => {
+  const BannerId = req.params.bid;
+  Banner.findByIdAndRemove(BannerId)
+  .then((result) => {
+    res.json({
+      success: true,
+      msg: `Banner has been deleted.`,
+      result: {
+        _id: result._id,
+        title: result.title,
+      }
+    });
+  })
+  .catch((err) => {
+    res.status(404).json({ success: false, msg: 'there is no Banner image to delete with provided id.' });
+  });
+
+};
 
 
 //postAdvertisementImages
@@ -634,6 +654,7 @@ const updatePlanById = async (req, res, next) => {
   exports.updateProductVisiblity = updateProductVisiblity;
   exports.postBannerImages = postBannerImages;
   exports.getBannerImages = getBannerImages;
+  exports.deleteBannerImageById = deleteBannerImageById;
   exports.postAdvertisementImages = postAdvertisementImages;
   exports.getAdvertisementImages = getAdvertisementImages;
   exports.addCategory = addCategory;
