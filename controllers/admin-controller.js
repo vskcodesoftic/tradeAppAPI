@@ -332,6 +332,27 @@ const deleteBannerImageById = async (req, res, next) => {
 };
 
 
+//Delete Banner Images ById
+const deleteAddsImageById = async (req, res, next) => {
+  const AddsId = req.params.aid;
+  Banner.findByIdAndRemove(AddsId)
+  .then((result) => {
+    res.json({
+      success: true,
+      msg: `Add has been deleted.`,
+      result: {
+        _id: result._id,
+        title: result.title,
+      }
+    });
+  })
+  .catch((err) => {
+    res.status(404).json({ success: false, msg: 'there is no Add image to delete with provided id.' });
+  });
+
+};
+
+
 //postAdvertisementImages
 const postAdvertisementImages = async (req ,res , next) => {
   const errors = validationResult(req);
@@ -654,6 +675,7 @@ const updatePlanById = async (req, res, next) => {
   exports.updateProductVisiblity = updateProductVisiblity;
   exports.postBannerImages = postBannerImages;
   exports.getBannerImages = getBannerImages;
+  exports.deleteAddsImageById = deleteAddsImageById;
   exports.deleteBannerImageById = deleteBannerImageById;
   exports.postAdvertisementImages = postAdvertisementImages;
   exports.getAdvertisementImages = getAdvertisementImages;

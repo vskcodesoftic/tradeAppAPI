@@ -41,6 +41,10 @@ router.post('/adds/addImages', fileUpload.single('image'), adminController.postA
 //getImages
 router.get('/adds/getImages', adminController.getAdvertisementImages);
 
+//delete Banner images by id
+router.delete('/adds/:aid', adminController.deleteAddsImageById);
+
+
 //postCategory
 router.post('/category/addCategory'  , adminController.addCategory);
 
