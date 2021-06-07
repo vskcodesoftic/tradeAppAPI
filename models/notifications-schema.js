@@ -20,8 +20,9 @@ const notificationSchema = new Schema({
      flag : { type : String},
      type: { type : String},
      senderId: { type : String},
+     roomId : { type : String, default :'trade' },
      isRead : { type : Boolean, default : 'false'},
-
+     coversations: [{ type: mongoose.Types.ObjectId,  ref: 'Room'}],
 
 
 
