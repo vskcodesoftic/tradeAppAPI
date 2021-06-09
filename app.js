@@ -95,14 +95,22 @@ app.use('/api/payment/',paymentPageRoutes);
 app.use('/api/trade/',tradePageRoutes);
 
 io.on('connection', async (socket) => {
+  
+ 
+  
   console.log(socket.id)
-let roomId;
-let userName ;
+  let roomId;
+  let userName ;
 socket.on('login', ({ name ,room , notificationId }, callback) => {
+  socket.on('clientDetails', function(data) {
+    console.log(`${data.userId} name ${data.name}` );
+ });
+
       const { user, error } = addUser(socket.id, name, room ,notificationId)
       console.log(user.notificationId)
       roomId = user.room
       userName = user.name
+      NotificationID = user.notificationId
       if (error) return callback(error)
       socket.join(user.room)
       socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the roomId` })
@@ -114,41 +122,54 @@ socket.on('login', ({ name ,room , notificationId }, callback) => {
 
   let roooId;  
   try {
-    roooId = Room.find({ roomId : `${roomId}`})
+    roooId = Room.find({roomId : `${roomId}`})
   }
   catch(Err){
-    console.log(err)
+    console.log(Err)
   }
 
   if(!roooId){
-  
   socket.on('sendMessage', message => {
-   
-    const messages = new Room({
-      roomId : roomId,
-      msg:message
-    })
-    
-     messages.save().then(()=>{
-      const user = getUser(socket.id)
-      io.in(user.room).emit('message', { user: user.name, text: message });
+try {
+  const messages = new Room({
+    roomId ,
+    msg:message
+  })
+   messages.save().then(()=>{
+    const user = getUser(socket.id)
+    io.in(user.room).emit('message', { user: user.name, text: message });
 
-     })
+   })
+} catch (error) {
+  console.log(error)
+}
+    
    
   })
 
 }
 else {
   let all = []
+  let allmsg = []
   socket.on('sendMessage', message => {
-    all.push(`${userName}:${message}`)
-     
-       Room.updateOne({ roomId : roomId }, {  msg : all }).then(()=>{
-        const user = getUser(socket.id)
-        io.in(user.room).emit('message', { user: user.name, text: message })
-       })
-    
+  
+ //save database if room id matches to on room model
+try {
+  Room.updateOne({ "roomId": roomId }, {
+    "$push": {
+        "msg": `${userName} : ${message}`,
+        "partcipants" : `${userName}`
+    }
+}).then(()=>{
+    const user = getUser(socket.id)
+    io.in(user.room).emit('message', { user: user.name, text: message })
+   })
 
+} catch (error) {
+  console.log(error)
+}
+     
+  
    
   })
 

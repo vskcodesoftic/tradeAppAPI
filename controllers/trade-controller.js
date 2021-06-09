@@ -4,11 +4,15 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 
+const { v1: uuid } = require('uuid')
+
 
 
 const { validationResult } = require("express-validator");
 
 const User = require("../models/user-schema");
+const Room = require("../models/room-schema");
+
 const Product = require("../models/product-schema");
 const Notification = require('../models/notifications-schema')
 const FcmIds = require('../models/fcmids-schema');
@@ -18,7 +22,6 @@ const serverKey = require('../firebase/config/firebasecred.json') //put the gene
 const fcm = new FCM(serverKey)
 const HttpError = require("../middleware/http-error");
 
-const { v1: uuid } = require("uuid");
 
 // const sendTradeRequest = async (req, res, next) => {
 //   const errors = validationResult(req);
@@ -692,7 +695,8 @@ fcm.send(message, function(err, response){
    userFcmToken : LoggedUserFcmToken,
    selectedUserFcmToken : SelectedUserFcmToken,
    senderId: LoggedUserID,
-   flag :LoggedUserCountryCode
+   flag :LoggedUserCountryCode,
+   roomId : uuid() 
  });
 
  try {
@@ -714,6 +718,23 @@ fcm.send(message, function(err, response){
    );
    return next(error);
  }
+
+
+//create room
+const createdRoom = new Room({
+  roomId : uuid() 
+});
+
+try {
+  await createdRoom.save();
+} catch (err) {
+  const error = new HttpError(
+    'Creating Room failed, please try again.',
+    500
+  );
+  console.log(err)
+  return next(error);
+}
 
  res.json({message : 'trade request sent ', Traderequest : createdNotification })
 }
@@ -992,7 +1013,7 @@ const confirmTradeRequest = async (req, res ,next) => {
 
    
 
-   res.json({ message : 'trade request declined', type : notification.type , flag : notification.flag ,isRead : notification.isRead })
+   res.json({ message : 'trade request declined', type : notification.type , flag : notification.flag ,isRead : notification.isRead , roomId : notification.roomId })
  }
 
 
