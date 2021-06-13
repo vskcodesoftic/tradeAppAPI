@@ -20,6 +20,7 @@ const userSchema = new Schema({
     expireToken:{ type:Date },
     ip:{ type:String },
     browser:{ type:String },
+    status : { type :String , default :'active'},
     inventory: [{ type: mongoose.Types.ObjectId,  ref: 'Product'}],
     plans: [{ type: mongoose.Types.ObjectId,  ref: 'Plans'}],
     payments: [{ type: mongoose.Types.ObjectId,  ref: 'Payment'}],
