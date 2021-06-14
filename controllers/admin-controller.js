@@ -180,15 +180,15 @@ res.json({
 //get list of users
 const getAdminsList = async(req, res, next) => {
 
-  let users
+  let admins
   try{
-      users = await Admin.find()
+      admins = await Admin.find()
   }
   catch(err){
       const error = new HttpError("can not fetch admins complete request",500)
       return next(error)
   }
-  res.json({ users : users.map( user => user.toObject({ getters : true})) })
+  res.json({ admins : users.map( user => user.toObject({ getters : true})) })
   
   }
 
