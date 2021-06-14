@@ -560,10 +560,7 @@ const deleteCategoryByID= async (req, res, next) => {
   .then((result) => {
     res.json({
       success: true,
-      msg: `category has been deleted.`,
-      result: {
-        _id: result._id
-      }
+      msg: `category has been deleted.`
     });
   })
   .catch((err) => {
