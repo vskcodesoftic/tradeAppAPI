@@ -177,7 +177,7 @@ res.json({
 
 }
 
-//get list of users
+//get list of admin
 const getAdminsList = async(req, res, next) => {
 
   let admins
@@ -192,8 +192,27 @@ const getAdminsList = async(req, res, next) => {
   
   }
 
+  //Delete admins  ById
+const deleteAdminById = async (req, res, next) => {
+  const AdminId = req.params.aid;
+  Admin.findByIdAndRemove(AdminId)
+  .then((result) => {
+    res.json({
+      success: true,
+      msg: `Admin has been deleted.`,
+      result: {
+        _id: result._id,
+        name: result.name,
+      }
+    });
+  })
+  .catch((err) => {
+    res.status(404).json({ success: false, msg: 'there is no Admin image to delete with provided id.' });
+  });
+
+};
   
-////update password
+//update password
 
 const  updateAdminPassword = async(req, res, next) => {
   const errors = validationResult(req);
@@ -772,3 +791,4 @@ const updatePlanById = async (req, res, next) => {
   exports.adminLogin = adminLogin;
   exports.updateAdminPassword = updateAdminPassword;
   exports.getAdminsList = getAdminsList;
+  exports.deleteAdminById = deleteAdminById;

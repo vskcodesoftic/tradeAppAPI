@@ -27,9 +27,11 @@ router.get('/usersList', adminController.getUsersList);
 //change Password based on old password
 router.post('/changePassword' ,adminController.updateAdminPassword);
 
-//get list of users
+//get list of admins
 router.get('/adminsList', adminController.getAdminsList);
 
+//delete admins  by id
+router.delete('/admin/:aid', adminController.deleteAdminById);
 
 //postBannerImages
 router.post('/banner/addImages',  fileUpload.single('image'), adminController.postBannerImages);
