@@ -177,6 +177,22 @@ res.json({
 
 }
 
+//get list of users
+const getAdminsList = async(req, res, next) => {
+
+  let users
+  try{
+      users = await Admin.find()
+  }
+  catch(err){
+      const error = new HttpError("can not fetch admins complete request",500)
+      return next(error)
+  }
+  res.json({ users : users.map( user => user.toObject({ getters : true})) })
+  
+  }
+
+  
 ////update password
 
 const  updateAdminPassword = async(req, res, next) => {
@@ -755,3 +771,4 @@ const updatePlanById = async (req, res, next) => {
   exports.createAdmin = createAdmin;
   exports.adminLogin = adminLogin;
   exports.updateAdminPassword = updateAdminPassword;
+  exports.getAdminsList = getAdminsList;

@@ -21,11 +21,14 @@ router.post('/login',adminController.adminLogin);
 //admin signup
 router.post('/auth/create',adminController.createAdmin);
 
+//get list of users
+router.get('/usersList', adminController.getUsersList);
+
 //change Password based on old password
 router.post('/changePassword' ,adminController.updateAdminPassword);
 
-//get list of products
-router.get('/usersList', adminController.getUsersList);
+//get list of users
+router.get('/adminsList', adminController.getAdminsList);
 
 
 //postBannerImages
