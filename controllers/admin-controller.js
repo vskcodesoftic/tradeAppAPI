@@ -553,6 +553,24 @@ const getCategories = async (req, res, next) => {
   
 }
 
+//DELETE category by id
+const deleteCategoryByID= async (req, res, next) => {
+  const categoryId = req.params.cid;
+  Category.findByIdAndRemove(categoryId)
+  .then((result) => {
+    res.json({
+      success: true,
+      msg: `category has been deleted.`,
+      result: {
+        _id: result._id
+      }
+    });
+  })
+  .catch((err) => {
+    res.status(404).json({ success: false, msg: 'there is no categoryId to delete with provided id.' });
+  });
+
+};
 
 
 
@@ -778,8 +796,11 @@ const updatePlanById = async (req, res, next) => {
   exports.deleteBannerImageById = deleteBannerImageById;
   exports.postAdvertisementImages = postAdvertisementImages;
   exports.getAdvertisementImages = getAdvertisementImages;
+ 
   exports.addCategory = addCategory;
   exports.getCategories = getCategories;
+  exports.deleteCategoryByID = deleteCategoryByID;
+
   exports.getUsersList = getUsersList;
   exports.updatePlanById = updatePlanById;
   exports.getUsersCount = getUsersCount;

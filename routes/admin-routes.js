@@ -58,6 +58,8 @@ router.post('/category/addCategory'  , adminController.addCategory);
 //getCategories
 router.get('/category/getCategory'  , adminController.getCategories);
 
+//delete category by id
+router.delete('/category/:cid', adminController.deleteCategoryByID);
 
 //create Plan
 router.post('/plans/createPlan'  , adminController.createPlan);
