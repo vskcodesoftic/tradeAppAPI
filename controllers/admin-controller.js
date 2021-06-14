@@ -188,7 +188,7 @@ const getAdminsList = async(req, res, next) => {
       const error = new HttpError("can not fetch admins complete request",500)
       return next(error)
   }
-  res.json({ admins : users.map( user => user.toObject({ getters : true})) })
+  res.json({ admins : admins.map( admin => admin.toObject({ getters : true})) })
   
   }
 
