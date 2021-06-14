@@ -1,6 +1,9 @@
-require("dotenv").config()
+const dotenv = require("dotenv").config()
 //dotenv for envoirment variables
-
+ // environment: development, staging, production
+ 
+ const environment = process.env.NODE_ENV;
+ 
 //ejs
 const ejs = require('ejs');
 
@@ -207,9 +210,15 @@ app.use((error, req, res, next) => {
   mongoose.connect(process.env.MONGO_PROD_URI,{  useNewUrlParser: true , useUnifiedTopology: true ,useFindAndModify : false ,'useCreateIndex' : true })
   .then(() => {
     console.log("server is live");
-    http.listen(process.env.PORT || 8001, function(){
-      console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
-    });;
+    http.listen(process.env.PORT, () => {
+      console.log(`server running in ${environment} mode & listening on port ${process.env.PORT}`);
+      if (environment !== 'production' && environment !== 'development' && environment !== 'testing') {
+        console.error(
+          `NODE_ENV is set to ${environment}, but only production and development are valid.`
+        );
+        process.exit(1);
+      }
+    });
   
   })
   .catch(err => {
