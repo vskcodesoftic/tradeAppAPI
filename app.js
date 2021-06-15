@@ -1,7 +1,8 @@
 const dotenv = require("dotenv").config()
+require("dotenv").config()
+
 //dotenv for envoirment variables
  // environment: development, staging, production
- 
  const environment = process.env.NODE_ENV;
  
 //ejs

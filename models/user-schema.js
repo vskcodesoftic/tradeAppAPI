@@ -16,6 +16,7 @@ const userSchema = new Schema({
     dob : { type : Date },
     nickname : { type : String},
     gender: { type : String},
+    authToken :{ type : String},
     resetToken:{ type:String },
     expireToken:{ type:Date },
     ip:{ type:String },

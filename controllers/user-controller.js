@@ -235,6 +235,23 @@ catch (err) {
   );
   return next(error);
 } 
+
+//updating auth token
+try {
+
+  let updatedRecord = {
+    authToken: token
+}
+
+  await  User.findByIdAndUpdate(user, { $set: updatedRecord },{new:true})
+
+} catch (err) {
+  console.log(err)
+  const error = await new HttpError("authtoken updation failed, try again",500)
+  return next(error)
+}
+
+
 console.log("logged in");
 res.json({ 
     message : 'user logged in successful' , 
