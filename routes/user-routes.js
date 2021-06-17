@@ -55,8 +55,14 @@ userController.createProduct);
 router.get('/getBalance', checkAuth ,
 userController.getBalanceById);
 
+
 //get notifications by userId 
 router.get('/getNotificationByUserId', checkAuth ,
 userController.getNotificationsByUserID);
 
+
+router.all(
+  "/me",checkAuth,
+  userController.getUserInfo
+)
 module.exports = router;

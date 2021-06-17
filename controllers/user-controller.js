@@ -262,6 +262,23 @@ res.json({
 
 }
 
+
+
+const getUserInfo = async (req, res) => {
+  await User.findOne({
+      where: {id: req.userData.userId},
+      attributes: {exclude: 'password'}
+  })
+      .then(user => {
+          return res.status(200).json({result: user});
+        console.log(user)
+      })
+      .catch(err => {
+          return res.status(400).json({msg: err.toString()});
+      });
+};
+
+
 //update password
 
 const  updateUserPassword = async(req, res, next) => {
@@ -753,3 +770,6 @@ exports.getBalanceById = getBalanceById;
 
 //get notfication by userId
 exports.getNotificationsByUserID = getNotificationsByUserID;
+
+//get userInfo
+exports.getUserInfo = getUserInfo;
