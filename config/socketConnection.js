@@ -17,12 +17,11 @@ const socketConnection = async(io) => {
   io.count = 0;
   io.on('connection', async (socket) => {
   
- 
-  
     console.log(socket.id)
     let roomId;
     let userName ;
   socket.on('login', ({ name ,room , notificationId }, callback) => {
+    
     socket.on('clientDetails', function(data) {
       console.log(`${data.userId} name ${data.name}` );
    });
@@ -48,7 +47,7 @@ const socketConnection = async(io) => {
     catch(Err){
       console.log(Err)
     }
-  
+
     if(!roooId){
     socket.on('sendMessage', message => {
   try {
@@ -72,20 +71,25 @@ const socketConnection = async(io) => {
   else {
     let all = []
     let allmsg = []
-    socket.on('sendMessage', message => {
+    socket.on('sendMessage',async (message) => {
     
    //save database if room id matches to on room model
   try {
-    Room.updateOne({ "roomId": roomId }, {
+   await Room.updateOne({ "roomId": roomId }, {
       "$push": {
-          "msg": `${userName} : ${message}`,
-          "partcipants" : `${userName}`
+          msg: `${userName} : ${message}`,
+          partcipants : `${userName}`,
+          chats: [{
+            userId: userName,
+            message: message
+          }]
       }
-  }).then(()=>{
-      const user = getUser(socket.id)
-      io.in(user.room).emit('message', { user: user.name, text: message })
-     })
+  })
   
+//populate message based on room id
+    const latestMessage = await Room.findOne({  "roomId": roomId }).populate({ path: 'chats.userId', select: '_id' });
+      const user = getUser(socket.id)
+      io.in(user.room).emit('message', { user: user.name, text: message  ,chats :latestMessage})
   } catch (error) {
     console.log(error)
   }

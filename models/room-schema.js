@@ -10,7 +10,20 @@ const roomSchema = new Schema({
     msg: [{type: String, }],
     partcipants :[{type: String }],
     createdAt : { type: Date, default: Date.now},
-    creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
+    chats: [{
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        message: {
+            type: String
+        },
+        time: {
+            type: Date,
+            default: new Date
+        }
+     }],
+     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
 
    });
 
