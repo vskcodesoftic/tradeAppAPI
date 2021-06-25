@@ -109,7 +109,7 @@ const createPayment = async (req, res, next) => {
   
 // post create basic payment  based on type of plan
 const createBasicPayment = async (req, res, next) => {
-  const  { CstFName, CstEmail, CstMobile, ProductTitle } = req.body;
+  const  { CstFName, CstEmail, CstMobile, ProductTitle , creator } = req.body;
     
       const planType = req.params.pid;
 
@@ -122,7 +122,9 @@ const createBasicPayment = async (req, res, next) => {
       );
     }
   
-   const creator = req.userData.userId;
+     const creator = creator
+
+   //const creator = req.userData.userId;
 
     //const creator =  "606ab49296e7700f29b6ac5e";
 

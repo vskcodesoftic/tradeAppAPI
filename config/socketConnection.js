@@ -27,7 +27,6 @@ const socketConnection = async(io) => {
    });
   
         const { user, error } = addUser(socket.id, name, room ,notificationId)
-        console.log(user.notificationId)
         roomId = user.room
         userName = user.name
         NotificationID = user.notificationId
