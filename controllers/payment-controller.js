@@ -109,10 +109,10 @@ const createPayment = async (req, res, next) => {
   
 // post create basic payment  based on type of plan
 const createBasicPayment = async (req, res, next) => {
-  const  { CstFName, CstEmail, CstMobile, ProductTitle , creator } = req.body;
+  const  { CstFName, CstEmail, CstMobile, ProductTitle  } = req.body;
     
       const planType = req.params.pid;
-
+      const creator = req.params.cid;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -121,7 +121,7 @@ const createBasicPayment = async (req, res, next) => {
         new HttpError('Invalid inputs passed, please check your data.', 422)
       );
     }
-  
+    console.log(creator)
     //const creator = creator
 
    //const creator = req.userData.userId;
