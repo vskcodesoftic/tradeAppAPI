@@ -122,7 +122,7 @@ const createBasicPayment = async (req, res, next) => {
       );
     }
   
-     const creator = creator
+    //const creator = creator
 
    //const creator = req.userData.userId;
 
