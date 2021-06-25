@@ -135,7 +135,7 @@ const createBasicPayment = async (req, res, next) => {
         user = await User.findById(creator);
       }
          catch (err) {
-      const error = new HttpError('Creating product failedl, please try again', 500);
+      const error = new HttpError('server side error , please try again', 500);
       console.log("error ")
       return next(error);
     }
@@ -197,11 +197,11 @@ const createBasicPayment = async (req, res, next) => {
         total_price: identifiedPrice,  
         CurrencyCode:'USD',
       //  success_url:process.env.SUCCESS_URL,
-        error_url: `http://localhost:8001/api/payment/errorUrl`,
+        error_url: `http://api.badilnyint.com/api/payment/errorUrl`,
         test_mode:'',
-        CstFName : "siva",
+        CstFName : "test",
         CstEmail : "testing@gmail.com",
-        success_url :`http://localhost:8001/api/payment/successUrl/:${postId}/creator/:${cId}`
+        success_url :`http://api.badilnyint.com/api/payment/successUrl/:${postId}/creator/:${cId}`
 
       })
       .then(async (response) =>{
