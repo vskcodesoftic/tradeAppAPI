@@ -146,11 +146,14 @@ const createBasicPayment = async (req, res, next) => {
     }
     
 
+
+  console.log(planType)
+
      //IdentifyingPrice of plan
      let identifyPrice;
      try{
          
-     identifyPrice  = await Plan.findOneAndUpdate({ type : planType });
+     identifyPrice  = await Plan.findOne({ type : planType }).exec();
 
      }
      catch(err){
@@ -169,7 +172,7 @@ const createBasicPayment = async (req, res, next) => {
          let identifyNumPosts;
          try{
              
-         identifyNumPosts  = await Plan.findOneAndUpdate({ type : planType });
+         identifyNumPosts  = await Plan.findOne({ type : planType }).exec();
     
          }
          catch(err){
