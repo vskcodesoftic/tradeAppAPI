@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 let geoip = require('geoip-lite');
 
 const {  sendEmail  ,sendEmailOtpLink  , sendEmailLink } = require('../services/mail.service');
-const {forgetHTML , signupHTML } = require('../tempalates/signUpHtml');
+const {forgetHTML , signupHTML, loginMailHTML } = require('../tempalates/signUpHtml');
 
 const {generateOTP} = require('../util/genarateOtp');
 
@@ -155,6 +155,36 @@ const  userLogin = async(req, res, next) => {
         return next(error)
     }
   
+
+  //checking for verified status
+   
+  if(user.isVerified != true){
+    const error = new HttpError("please activate your account , check your email",401)
+  
+
+  //resending email
+  let otp;
+  let html;
+  try {
+    otp = generateOTP();
+    html = loginMailHTML( otp, email);
+    
+
+      let updatedRecord = {
+        otpHex: otp
+    }
+
+   await  User.findByIdAndUpdate(user, { $set: updatedRecord },{new:true})
+    await sendEmail(email, html);
+  }
+  catch(err){
+    const error = new HttpError("could not genrate otp",500);
+    return next(error)
+  }
+  return next(error)
+
+}
+
    let isValidPassword = false; 
    try{
          isValidPassword = await bcrypt.compare(password, user.password)
@@ -759,7 +789,6 @@ const getNotificationsByUserID = async (req ,res ,next ) => {
 
 
 //email verification by otp
-  //verify otp
   const EmailotpVerify = async (req, res) => {
 
     const otp = req.query.otpId;
