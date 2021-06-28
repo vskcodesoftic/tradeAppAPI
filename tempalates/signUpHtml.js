@@ -1,7 +1,8 @@
 
- const signupHTML = (name, otp) => `
+ const signupHTML = (name, otp, email) => `
 <h2>Hi, ${name} </h2>
 <h3>Your verification OTP is ${otp}</h3>
+<a href="http://localhost:8001/api/user/emailVerify/?otpId=${otp}&emailId=${email}">click for verfication</a>
 `;
  const forgetHTML = (name, otp) => `
 <h2>Hi, ${name} </h2>
@@ -11,6 +12,8 @@ const addAdminMail = (name, otp, password) => `
 <h2>Hi, ${name} </h2>
 <h3>Your verification OTP is ${otp}</h3>
 <h3>& Your Password is ${password}, Please reset your password after logging in</h3>
+<br />
+
 `;
 
 exports.signupHTML = signupHTML ;

@@ -60,6 +60,9 @@ userController.getBalanceById);
 router.get('/getNotificationByUserId', checkAuth ,
 userController.getNotificationsByUserID);
 
+//email verfication
+router.get('/emailVerify',userController.EmailotpVerify);
+
 
 router.all(
   "/me",checkAuth,

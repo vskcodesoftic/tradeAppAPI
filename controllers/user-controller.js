@@ -7,8 +7,8 @@ const mongoose = require('mongoose');
 
 let geoip = require('geoip-lite');
 
-const {  sendEmail  ,sendEmailOtpLink } = require('../services/mail.service');
-const {forgetHTML } = require('../tempalates/signUpHtml');
+const {  sendEmail  ,sendEmailOtpLink  , sendEmailLink } = require('../services/mail.service');
+const {forgetHTML , signupHTML } = require('../tempalates/signUpHtml');
 
 const {generateOTP} = require('../util/genarateOtp');
 
@@ -65,7 +65,18 @@ const createUser = async (req, res, next) => {
        return next(error)
    }
 
-
+    let otp;
+    let html;
+    try {
+      otp = generateOTP();
+       html = signupHTML(name, otp, email);
+      await sendEmail(email, html);
+    }
+    catch(err){
+      const error = new HttpError("could not genrate otp",500);
+      return next(error)
+    }
+   
     const createdUser = new User({
         name,
         email,
@@ -79,7 +90,8 @@ const createUser = async (req, res, next) => {
         country,
         nickname,
         gender,
-        browser
+        browser,
+        otpHex:otp
      
     })
 
@@ -112,7 +124,8 @@ const createUser = async (req, res, next) => {
         );
         return next(error);
       }
-    
+
+
      
     res.status(201).json({ userId : createdUser.id,email : createdUser.email ,countrycode :createdUser.countryCode , phoneNumber :createdUser.phoneNumber, token: token})
 }
@@ -362,6 +375,7 @@ const forgetPassword = async (req, res) => {
 
       await User.updateOne({ _id: user._id }, { otpHex: otp });
       await sendEmail(user.email, html);
+      
       return res.send({
         code: 200,
         email: user.email,
@@ -742,6 +756,40 @@ const getNotificationsByUserID = async (req ,res ,next ) => {
 
 }
 
+
+
+//email verification by otp
+  //verify otp
+  const EmailotpVerify = async (req, res) => {
+
+    const otp = req.query.otpId;
+    const email = req.query.emailId;
+    
+    if (otp && email) {
+      try {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return res.send({ code: 404, msg: 'User not Found' });
+        }
+        if (user.otpHex !== otp) return res.send({ code: 400, msg: 'Wrong OTP' });
+    
+          user.otpHex = undefined
+          user.isVerified = true
+          user.save().then((status)=>{
+            return res.redirect('/emailVerifedsucessfully.html')
+          })
+          
+       
+      } catch (err) {
+        sentryCapture(err);
+        console.log(err);
+        return res.send({ code: 500, msg: 'Internal Server Error' });
+      }
+    }
+  };
+
+
+
 //user signup
 exports.createUser =  createUser;
 //user login
@@ -773,3 +821,6 @@ exports.getNotificationsByUserID = getNotificationsByUserID;
 
 //get userInfo
 exports.getUserInfo = getUserInfo;
+
+//email verfication
+exports.EmailotpVerify = EmailotpVerify;

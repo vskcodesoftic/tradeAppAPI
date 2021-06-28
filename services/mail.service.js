@@ -27,13 +27,13 @@ const sendEmail = async (to,html) => {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'sivakrishnavegi.lpu@gmail.com',
-          pass: 'Krishna@2'
+          user: 'siva.codesoftic@gmail.com',
+          pass: 'Codesoftic@08'
         }
       });
       
       let mailOptions = {
-        from: 'sivakrishnavegi.lpu@gmail.com',
+        from: 'siva.codesoftic@gmail.com',
         to,
         subject: 'Email verfication ',
         text: 'few steps !',
@@ -49,17 +49,18 @@ const sendEmail = async (to,html) => {
       });
 }
 
+
 const sendEmailOtpLink = async (to,token) => {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'sivakrishnavegi.lpu@gmail.com',
-          pass: 'Krishna@2'
+          user: 'siva.codesoftic@gmail.com',
+          pass: 'Codesoftic@08'
         }
       });
       
       let mailOptions = {
-        from: 'sivakrishnavegi.lpu@gmail.com',
+        from: 'siva.codesoftic@gmail.com',
         to,
         subject: 'Email verfication ',
         text: 'few steps !',
@@ -81,7 +82,39 @@ const sendEmailOtpLink = async (to,token) => {
 }
 
 
+const sendEmailLink = async (to,token) => {
+  let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'siva.codesoftic@gmail.com',
+        pass: 'Codesoftic@08'
+      }
+    });
+    
+    let mailOptions = {
+      from: 'siva.codesoftic@gmail.com',
+      to,
+      subject: 'Email verfication ',
+      text: 'few steps !',
+      html:`
+      <h3>email for account activation  </h3>
+      <h4>Click in this <a href="${process.env.SERVER}/reset/:${token}">link to</a> to Reset Your Password</h4>
+      <p>your token </p>
+      <p> ${token} </p>
+      `
+    };
+    
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+}
+
 
 
 exports.sendEmailOtpLink = sendEmailOtpLink;
 exports.sendEmail = sendEmail;
+exports.sendEmailLink = sendEmailLink;
