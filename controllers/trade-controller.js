@@ -645,7 +645,7 @@ fcm.send(message, function(err, response){
 
 
  // offered Products 
- let offrdProducts  = await offeredProductId.pids
+ let offrdProducts  = await offeredProductId
   let msg = [];
  for (const productOffrd in offrdProducts) {
   // console.log(`${prduct}: ${ds[prduct]}`);
