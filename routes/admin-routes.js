@@ -103,5 +103,18 @@ router.get('/getFeauturedProductsCount', adminController.getFeauturedProductsCou
 //get payments count
 router.get('/getPaymentsCount', adminController.getPaymentsCount);
 
+//update user status by id
+//updateplan by id
+router.patch(
+  '/users/u/:uid',
+  [
+    check('status')
+      .not()
+      .isEmpty()
+  
+  ],
+  adminController.updateUserById
+);
+
 
 module.exports = router;

@@ -277,6 +277,51 @@ catch(err){
 }
 
 
+//update user by id
+//update product by id
+const updateUserById = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+  const { status } = req.body;
+  const userId = req.params.uid;
+
+  let user;
+  try {
+    user = await User.findById(userId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not found to  update user.',
+      500
+    );
+    return next(error);
+  }
+
+  user.status = status;
+
+
+
+
+  try {
+    await user.save();
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not update the  user status.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ user: user.toObject({ getters: true }) });
+
+};
+
+
+
 
 //get list of users
 const getUsersList = async(req, res, next) => {
@@ -810,3 +855,5 @@ const updatePlanById = async (req, res, next) => {
   exports.updateAdminPassword = updateAdminPassword;
   exports.getAdminsList = getAdminsList;
   exports.deleteAdminById = deleteAdminById;
+
+  exports.updateUserById = updateUserById;
