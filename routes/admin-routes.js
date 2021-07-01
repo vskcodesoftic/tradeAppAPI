@@ -57,6 +57,12 @@ router.delete('/adds/:aid', adminController.deleteAddsImageById);
 //postCategory
 router.post('/category/addCategory'  , adminController.addCategory);
 
+//postSubCategorybyId
+router.patch('/category/addSubCategory/:cid'  , adminController.addSubCategory);
+
+//getSubCategories
+router.get('/category/sub/:cid',adminController.getSubCategories)
+
 //getCategories
 router.get('/category/getCategory'  , adminController.getCategories);
 

@@ -578,10 +578,13 @@ const addCategory = async(req, res, next) => {
   //const a= [{ cat :[ `${subcategory}`] }]
   //const fruits = await [`"${productIds}"`];
    //const category = await [`${subcategory}`]
+   let subs = []
+   subs = subcategory.split(',')
+   console.log(subs)
 
   const createdCategory = new Category({
      category,
-     subcategory
+     subcategory:subs
   });
 
  
@@ -600,6 +603,74 @@ const addCategory = async(req, res, next) => {
   res.status(201).json({ category: createdCategory });
 }
 
+//post add subcategory 
+const addSubCategory = async(req, res, next) => {
+   const categoryId = req.params.cid;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { subcategory  ,category} = req.body;
+  
+  //const a= [{ cat :[ `${subcategory}`] }]
+  //const fruits = await [`"${productIds}"`];
+   //const category = await [`${subcategory}`]
+  
+
+   let foundcategory;
+   try {
+    foundcategory = await Category.findById(categoryId);
+   } catch (err) {
+     const error = new HttpError(
+       'Something went wrong, could not found to  update plan.',
+       500
+     );
+     return next(error);
+   }
+   
+   let subs = []
+   subs = subcategory.split(',')
+   console.log(subs)
+   foundcategory.subcategory =subs;
+   foundcategory.category = category;
+
+  
+ 
+   try {
+     await foundcategory.save();
+   } catch (err) {
+     console.log(err)
+     const error = new HttpError(
+       'Something went wrong, could not update the  category.',
+       500
+     );
+     return next(error);
+   }
+ 
+   res.status(200).json({ category: foundcategory.toObject({ getters: true }) });
+
+   
+}
+
+//get subCategory by id
+const getSubCategories = async (req, res, next) => {
+  const findCategory = req.params.cid;
+
+  let category
+  try{
+    category = await Category.find({ _id : `${findCategory}` })
+  }
+  catch(err){
+      const error = new HttpError("can't fetch category complete request",500)
+      return next(error)
+  }
+  res.json({ subcategories : category.map( category => category.subcategory)})
+  
+}
 
 
 //get list of category 
@@ -977,7 +1048,10 @@ const createProduct = async (req, res, next) => {
  
   exports.addCategory = addCategory;
   exports.getCategories = getCategories;
+  exports.addSubCategory = addSubCategory;
+
   exports.deleteCategoryByID = deleteCategoryByID;
+  exports.getSubCategories = getSubCategories;
 
   exports.getUsersList = getUsersList;
   exports.updatePlanById = updatePlanById;
