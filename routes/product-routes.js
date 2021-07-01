@@ -7,6 +7,8 @@ const productController = require('../controllers/product-controller')
 
 const checkAuth = require('../middleware/authService');
 
+const hookFileUpload = require('../middleware/hook-file');
+
 router.get('/', (req, res, next) => {
  
   res.json({message: 'productPage routes'});
@@ -28,19 +30,14 @@ router.get('/uid', checkAuth,  productController.getProductsByUserId);
 router.get('/p/:pid', productController.getProductById);
 //updateproduct by id
 router.patch(
-    '/:pid',
-    [
-      check('title')
-        .not()
-        .isEmpty(),
-      check('description').not().isEmpty()
-    ],
+    '/:pid', hookFileUpload.single('image'),
     productController.updateProduct
   );
 
 //delete product by id
   router.delete('/:pid', productController.deleteProduct);
 
+  router.get('/all',productController.getAllProductsList);
 
 
 module.exports = router;

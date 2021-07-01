@@ -278,7 +278,6 @@ catch(err){
 
 
 //update user by id
-//update product by id
 const updateUserById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -320,7 +319,26 @@ const updateUserById = async (req, res, next) => {
 
 };
 
+//Delete user  ById
+const deleteUserById = async (req, res, next) => {
+  const userID = req.params.uid;
+  uSER.findByIdAndRemove(userID)
+  .then((result) => {
+    res.json({
+      success: true,
+      msg: `User has been deleted.`,
+      result: {
+        _id: result._id,
+        name: result.name,
+      }
+    });
+  })
+  .catch((err) => {
+    res.status(404).json({ success: false, msg: 'there is no User image to delete with provided id.' });
+  });
 
+};
+    
 
 
 //get list of users
@@ -825,6 +843,124 @@ const updatePlanById = async (req, res, next) => {
 
 };
 
+// post product 
+
+const createProduct = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+
+  const { title, description, modelNumber, category , subcategory ,isFeatured, quantity ,creator} = req.body;
+
+   //const creator = req.userData.userId;
+
+  let user;
+  try {
+      user = await Admin.findById(creator);
+    }
+       catch (err) {
+    const error = new HttpError('Creating product failedl, please try again', 500);
+    console.log("error ")
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError('Could not find user for provided id', 404);
+    return next(error);
+  }
+
+ const Nickname = user.nickname;
+ const Country = user.country;
+ const CountryTwoLetterCode = user.countryTwoLetterCode;
+
+
+   
+ const createdProduct = new Product({
+  title,
+  description,
+  modelNumber,
+  category,
+  subcategory,
+  image : req.file.path ,
+  creator,
+  isFeatured,
+  quantity,
+  nickname : 'admin',
+  country : 'kuwait',
+  countryTwoLetterCode : 'kW',
+  productid : uuid() 
+});
+
+ /// checking balance and decrementing by -1 from balance after posting product  if no bal message error to purchase plan
+ let userBal;
+ try {
+     userBal = await Admin.findOne({ _id : creator })
+   }
+      catch (err) {
+   const error = new HttpError(' please try again', 500);
+   console.log("error ")
+   return next(error);
+ }
+
+ 
+ 
+   //check if userwants to feauture product or not if he wants to feature product then his balance will be deducted by -2 if he doesnt then -1
+      
+    if(isFeatured === "true"){
+     console.log("isFeautured is "+isFeatured)
+     try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      await createdProduct.save({ session: sess });
+      await sess.commitTransaction();
+   
+
+
+
+    } catch (err) {
+        console.log(err)
+      const error = new HttpError(
+        'Creating product failed, please try again.',
+        500
+      );
+      return next(error);
+    }
+  
+    res.status(201).json({ product: createdProduct });
+    }
+    else {
+
+        
+   
+      console.log("isFeautured is "+isFeatured)
+      try {
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+        await createdProduct.save({ session: sess });
+        await sess.commitTransaction();
+     
+        await Admin.findByIdAndUpdate({ _id : creator }, {  isFeatured : true });
+  
+  
+  
+      } catch (err) {
+          console.log(err)
+        const error = new HttpError(
+          'Creating product failed, please try again.',
+          500
+        );
+        return next(error);
+      }
+    
+      res.status(201).json({ product: createdProduct });
+     }
+
+ 
+};
 
 
   exports.createPlan = createPlan ;
@@ -857,3 +993,6 @@ const updatePlanById = async (req, res, next) => {
   exports.deleteAdminById = deleteAdminById;
 
   exports.updateUserById = updateUserById;
+  exports.deleteUserById = deleteUserById;
+
+  exports.createProduct = createProduct;

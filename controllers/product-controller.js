@@ -226,7 +226,7 @@ const getProductById = async (req, res, next) => {
       );
     }
   
-    const { title, description } = req.body;
+    const { title, description , category, subcategory, status, isFeatured, quantity } = req.body;
     const productId = req.params.pid;
   
     let product;
@@ -242,7 +242,13 @@ const getProductById = async (req, res, next) => {
   
     product.title = title;
     product.description = description;
-  
+    product.image = req.file.path;
+    product.status = status;
+    product.isFeatured = isFeatured;
+    product.quantity = quantity;
+    product.category = category;
+    product.subcategory = subcategory;
+
     try {
       await product.save();
     } catch (err) {
@@ -278,7 +284,21 @@ const deleteProduct = async (req, res, next) => {
   };
   
   
+//getAllProducts
 
+//get list of featured products 
+const getAllProductsList = async (req, res, next) => {
+  let products
+  try{
+      products = await Product.find()
+  }
+  catch(err){
+      const error = new HttpError("can not fetch products complete request",500)
+      return next(error)
+  }
+  res.json({ products : products.map( product => product.toObject({ getters : true}))})
+  
+}
 
 //get products by creator id
 exports.getProductsByUserId = getProductsByUserId;
@@ -294,4 +314,5 @@ exports.getProductsList = getProductsList;
 exports.getFeaturedProductsList = getFeaturedProductsList;
 //get products list  based on  category
 exports.getProductsListbyCategory = getProductsListbyCategory;
-
+//getallproducts
+exports.getAllProductsList = getAllProductsList;

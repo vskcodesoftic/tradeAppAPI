@@ -10,6 +10,8 @@ const adminController = require('../controllers/admin-controller')
 
 const fileUpload = require('../middleware/file-upload');
 
+const hookFileUpload = require('../middleware/hook-file');
+
 const checkAuth = require('../middleware/authService');
 
 
@@ -116,5 +118,10 @@ router.patch(
   adminController.updateUserById
 );
 
+router.delete('/users/:uid', adminController.deleteUserById);
+
+
+router.post('/postItem' ,hookFileUpload.single('image'),
+adminController.createProduct);
 
 module.exports = router;
