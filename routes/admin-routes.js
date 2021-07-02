@@ -44,6 +44,19 @@ router.get('/banner/getImages', adminController.getBannerImages);
 //delete Banner images by id
 router.delete('/banner/:bid', adminController.deleteBannerImageById);
 
+//updateBannerById
+router.patch(
+  '/baneer/b/:bid', fileUpload.single('image'),
+  adminController.updateBannerById
+);
+
+//updateAdvertisementById
+router.patch(
+  '/adds/a/:bid', fileUpload.single('image'),
+  adminController.updateAdvertisementById
+);
+
+
 //postAdvertisementImages
 router.post('/adds/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);
 
@@ -52,6 +65,9 @@ router.get('/adds/getImages', adminController.getAdvertisementImages);
 
 //delete Banner images by id
 router.delete('/adds/:aid', adminController.deleteAddsImageById);
+
+//get Banner images by id
+router.get('/banner/:bid', adminController.getBannerImageById);
 
 
 //postCategory

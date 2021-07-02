@@ -460,6 +460,94 @@ catch(err){
 res.json({ Banner : createdBanner })
 }
 
+
+//update banner by id
+const updateBannerById = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+  const { title , description } = req.body;
+  const bannerId = req.params.bid;
+
+  let banner;
+  try {
+    banner = await Banner.findById(bannerId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not found to  update banner.',
+      500
+    );
+    return next(error);
+  }
+
+  banner.title = title;
+  banner.description = description;
+  banner.image = req.file.path;
+
+
+
+
+
+
+  try {
+    await banner.save();
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not update the  banner status.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ banner: banner.toObject({ getters: true }) });
+
+};
+
+//update banner by id
+const updateAdvertisementById = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError('Invalid inputs passed, please check your data.', 422)
+    );
+  }
+  const { title , description } = req.body;
+  const addId = req.params.bid;
+
+  let add;
+  try {
+    add = await Advertisement.findById(addId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not found to  update Addvertisement.',
+      500
+    );
+    return next(error);
+  }
+
+  add.title = title;
+  add.description = description;
+  add.image = req.file.path;
+  try {
+    await add.save();
+  } catch (err) {
+    console.log(err)
+    const error = new HttpError(
+      'Something went wrong, could not update the  addvertisement.',
+      500
+    );
+    return next(error);
+  }
+
+  res.status(200).json({ add: add.toObject({ getters: true }) });
+
+};
+
+
 //get bannerImgs
 const getBannerImages = async (req, res ,next) => {
   let BannerImages
@@ -562,6 +650,32 @@ const getAdvertisementImages = async (req, res ,next) => {
   }
   res.json({ advertisementImages : addImages.map( Imgs => Imgs.toObject({ getters : true}))})
 }
+
+//get Banner Images ById
+const getBannerImageById = async (req, res, next) => {
+  const bannerId = req.params.bid; //(objectidofbanner)
+
+  let banner;
+  try {
+      banner  = await Banner.findById(bannerId);
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not find a banner.',
+      500
+    );
+    return next(error);
+  }
+
+  if (!banner) {
+    const error = new HttpError(
+      'Could not find a banner for the provided id.',
+      404
+    );
+    return next(error);
+  }
+
+  res.json({ banner : banner.toObject({ getters: true }) });
+};
 
 //post add category 
 const addCategory = async(req, res, next) => {
@@ -1039,12 +1153,18 @@ const createProduct = async (req, res, next) => {
   exports.updatePlan = updatePlan;
   exports.deletePlan = deletePlan;
   exports.updateProductVisiblity = updateProductVisiblity;
+
   exports.postBannerImages = postBannerImages;
   exports.getBannerImages = getBannerImages;
+  exports.getBannerImageById = getBannerImageById;
+
   exports.deleteAddsImageById = deleteAddsImageById;
   exports.deleteBannerImageById = deleteBannerImageById;
+  exports.updateBannerById = updateBannerById;
+
   exports.postAdvertisementImages = postAdvertisementImages;
   exports.getAdvertisementImages = getAdvertisementImages;
+  exports.updateAdvertisementById = updateAdvertisementById;
  
   exports.addCategory = addCategory;
   exports.getCategories = getCategories;
