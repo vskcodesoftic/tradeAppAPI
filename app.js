@@ -42,9 +42,9 @@ const app = express();
 
 //allowing crross server from client side
 const server = http.createServer(app);
-const io = socket(server ,{
+const io = socket(server , {
   cors: {
-      origin: `${process.env.CLIENT}`,
+    origin: '*',
   }
 });
 
