@@ -12,7 +12,7 @@ const roomSchema = new Schema({
     createdAt : { type: Date, default: Date.now},
     chats: [{
         userId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: 'User'
         },
         message: {

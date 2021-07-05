@@ -25,4 +25,8 @@ router.get('/rejectTradeRequest/:id', checkAuth , tradeController.rejectTradeReq
 //send firebasemessage push notification
 router.post('/firebase/notification'  , tradeController.sendNotification);
 
+router.post('/sendMessage', checkAuth , tradeController.sendMessageToUser);
+
+router.post('/getMessages', checkAuth , tradeController.getAllMesageBasedOnRoomId);
+
 module.exports = router;

@@ -1017,9 +1017,101 @@ const confirmTradeRequest = async (req, res ,next) => {
  }
 
 
+//send Message 
+const sendMessageToUser = async(req, res, next) => {
+
+  //user id from body
+  const userId = req.userData.userId;
+   console.log(userId)
+  const {
+    RoomId,   // productID
+    Participants,
+    senderId,
+    senderName,
+    senderNationality,
+    productsOffered,
+    message
+  } = req.body;
+
+  
+  let user;
+  try {
+      user = await User.findById(userId);
+    }
+       catch (err) {
+    const error = new HttpError('sending  message failed auth not found, please try again', 500);
+    console.log("error ")
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new HttpError('Could not find user for provided id', 404);
+    return next(error);
+  }
+
+  const userName = user.name;
+   const userID = userId;
+    //save database if room id matches to on room model
+    try {
+      await Room.updateOne({ "roomId": RoomId }, {
+         "$push":{
+          msg: `${userName} : ${message}`,
+          partcipants : `${userID}`,
+          chats: [{
+            userId: userID,
+            message: message
+          }]
+      }
+     })
+    }
+    catch (err) {
+      const error = new HttpError('sending  message failed, please try again', 500);
+      console.log(err)
+      return next(error);
+    }
+
+    let latestMessage;
+    try {
+       latestMessage = await Room.findOne({  "roomId": RoomId }).populate({ path: 'chats.userId', select: '_id' });
+    }
+    catch (err) {
+      const error = new HttpError('sending  message failed, please try again', 500);
+      console.log(err)
+      return next(error);
+    }
+
+    res.json( { user: user.name, text: message  })
+     
+    }
+
+    //get  all the mesagges by user id
+
+    const getAllMesageBasedOnRoomId = async (req ,res ,next) => {
+     
+      const {
+        RoomId  // productID
+  
+      } = req.body;
+
+      let latestMessage;
+      try {
+         latestMessage = await Room.findOne({  "roomId": RoomId }).populate({ path: 'chats.userId', select: '_id' });
+      }
+      catch (err) {
+        const error = new HttpError('loading  message failed, please try again', 500);
+        console.log(err)
+        return next(error);
+      }
+      res.json({ chats : latestMessage})
+    }
+
+
 //exports.sendTradeRequest = sendTradeRequest;
 exports.acceptTrade = acceptTrade;
 exports.confirmTradeRequest =confirmTradeRequest;
 exports.sendDualTradeNotification = sendDualTradeNotification;
 exports.sendNotification = sendNotification;
 exports.rejectTradeRequest = rejectTradeRequest;
+exports.sendMessageToUser = sendMessageToUser;
+
+exports.getAllMesageBasedOnRoomId = getAllMesageBasedOnRoomId;
