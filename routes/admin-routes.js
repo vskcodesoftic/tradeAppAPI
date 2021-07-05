@@ -56,6 +56,7 @@ router.patch(
   adminController.updateAdvertisementById
 );
 
+router.get('/getCats', adminController.CategoryList)
 
 //postAdvertisementImages
 router.post('/adds/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);

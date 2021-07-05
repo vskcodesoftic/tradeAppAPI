@@ -1148,6 +1148,35 @@ const createProduct = async (req, res, next) => {
 };
 
 
+//show category list
+
+const CategoryList = async (req, res , next) => {
+
+
+  //const creator = req.userData.userId;
+
+ let categories;
+ try {
+  categories = await Category.find({}, 'category');
+   }
+      catch (err) {
+   const error = new HttpError('fetching failed, please try again', 500);
+   console.log(err)
+   return next(error);
+ }
+
+ if (!categories) {
+   const error = new HttpError('Could not find categories', 404);
+   return next(error);
+ }
+ 
+let categoriesArray = []
+categoriesArray.push(categories)
+
+ res.status(200).json({ Categories:  categoriesArray});
+
+}
+
   exports.createPlan = createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;
@@ -1190,3 +1219,4 @@ const createProduct = async (req, res, next) => {
   exports.deleteUserById = deleteUserById;
 
   exports.createProduct = createProduct;
+  exports.CategoryList = CategoryList;
