@@ -25,6 +25,9 @@ paymentController.createPayment);
 router.get('/pay/:pid/creator/:cid'  ,
 paymentController.createBasicPayment);
 
+//pay routue based on plan type 
+router.get('/freeplan/f/c/:pid'  , checkAuth, 
+paymentController.FreePayment);
 
 //post payment
 router.get('/successUrl/:postId/creator/:cId',

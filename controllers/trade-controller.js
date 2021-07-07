@@ -1095,7 +1095,7 @@ const sendMessageToUser = async(req, res, next) => {
 
       let latestMessage;
       try {
-         latestMessage = await Room.findOne({  "roomId": RoomId }).populate({ path: 'chats.userId', select: '_id' });
+         latestMessage = await Room.findOne({  "roomId": RoomId }).sort( { chats: 1 } ).populate({ path: 'chats.userId', select: '_id' });
       }
       catch (err) {
         const error = new HttpError('loading  message failed, please try again', 500);

@@ -740,7 +740,7 @@ const addSubCategory = async(req, res, next) => {
     foundcategory = await Category.findById(categoryId);
    } catch (err) {
      const error = new HttpError(
-       'Something went wrong, could not found to  update plan.',
+       'Something went wrong, could not update .',
        500
      );
      return next(error);
@@ -1177,6 +1177,40 @@ categoriesArray.push(categories)
 
 }
 
+//show SubCategory list
+
+const SubCategoryList = async (req, res , next) => {
+
+  const Cid = req.query.CId;
+   
+  //let Cid = "mobiles"
+  
+  //const creator = req.userData.userId;
+
+ let Subcategories;
+ try {
+  Subcategories = await Category.find({ category : `${Cid}` },'subcategory');
+   }
+
+      catch (err) {
+   const error = new HttpError('fetching failed, please try again', 500);
+   console.log(err)
+   return next(error);
+ }
+
+ if (!Subcategories) {
+   const error = new HttpError('Could not find Subcategories', 404);
+   return next(error);
+ }
+ 
+let SubcategoriesArray = []
+SubcategoriesArray.push(Subcategories)
+
+ res.status(200).json({ SubCategories:  SubcategoriesArray});
+
+}
+
+
   exports.createPlan = createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;
@@ -1219,4 +1253,6 @@ categoriesArray.push(categories)
   exports.deleteUserById = deleteUserById;
 
   exports.createProduct = createProduct;
+
   exports.CategoryList = CategoryList;
+  exports.SubCategoryList = SubCategoryList;

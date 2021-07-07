@@ -27,6 +27,7 @@ const userSchema = new Schema({
     payments: [{ type: mongoose.Types.ObjectId,  ref: 'Payment'}],
     notifications : [{ type : mongoose.Types.ObjectId , ref : 'Notification'}],
     isSubscribed : { type: Boolean, default: false },
+    isFreePlan :  { type: Boolean, default: false },
     isVerified : { type: Boolean, default: false },
     Balance : {type :Number , default : "0"},
     planexpireToken:{ type:Date },
