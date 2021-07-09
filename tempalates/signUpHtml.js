@@ -16,7 +16,7 @@ const addAdminMail = (name, otp, password) => `
 
 `;
 
-
+//logi ttemp
 const loginMailHTML = (otp, email) => `
 <h3>Your verification OTP is ${otp} </h3>
 <a href="http://localhost:8001/api/user/emailVerify/?otpId=${otp}&emailId=${email}">click for verfication</a>

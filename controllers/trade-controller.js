@@ -202,6 +202,8 @@ const HttpError = require("../middleware/http-error");
 
 const acceptTrade = async (req, res ,next) => {
  
+ 
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     console.log(errors);
@@ -227,7 +229,7 @@ const acceptTrade = async (req, res ,next) => {
     notification = await Notification.findById(notificationID);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not find a notification.",
+      "Something went wrong, could not , ,find a notification.",
       500
     );
     return next(error);
@@ -241,11 +243,15 @@ const acceptTrade = async (req, res ,next) => {
     return next(error);
   }
 
- 
+  const RoomNotificationId = notification.roomId;
+  console.log(RoomNotificationId)
+
   //changinging isRead to true , type : accepted
 
   notification.isRead = true;
   notification.type = 'accepted';
+
+  
 
  try {
       await notification.save();
@@ -259,6 +265,7 @@ const acceptTrade = async (req, res ,next) => {
 
     const notificationType = notification.type;
     const notificationIsRead = notification.isRead;
+
 
 
    // user single Products
@@ -327,7 +334,7 @@ try {
 } catch (err) {
   console.log(err)
   const error = new HttpError(
-    'Something went wrong, could not found to  update product.',
+    'Something went wrong, could not found to  update notification.',
     500
   );
   return next(error);
@@ -441,6 +448,35 @@ fcm.send(message, function(err, response){
 
 
     
+
+//creating notfication
+
+ const createdNotification = new Notification({
+  message : message,
+  type : 'accepted',
+  roomId : RoomNotificationId
+});
+
+try {
+  const sess = await mongoose.startSession();
+  sess.startTransaction();
+  await createdNotification.save({ session: sess });
+  userWhoRecivedRequest.notifications.push(createdNotification);
+  await userWhoRecivedRequest.save({ session: sess });
+  await sess.commitTransaction();
+
+
+
+
+} catch (err) {
+    console.log(err)
+  const error = new HttpError(
+    'Creating notfication failed, please try again.',
+    500
+  );
+  return next(error);
+}
+
 
 
  res.json({ Productids : ProductIds , message : `hi , ${UserNickname} your Trade Request has been accepted` , type :notificationType , isRead : notificationIsRead})
@@ -683,6 +719,11 @@ fcm.send(message, function(err, response){
 
  await console.log(msg)
 
+
+//uuid
+
+let NewRoomUuId = uuid()
+
  //sendingNotification
  const createdNotification = new Notification({
    message : [msg],
@@ -696,7 +737,7 @@ fcm.send(message, function(err, response){
    selectedUserFcmToken : SelectedUserFcmToken,
    senderId: LoggedUserID,
    flag :LoggedUserCountryCode,
-   roomId : uuid() 
+   roomId : NewRoomUuId
  });
 
  try {
@@ -722,7 +763,7 @@ fcm.send(message, function(err, response){
 
 //create room
 const createdRoom = new Room({
-  roomId : uuid() 
+  roomId : NewRoomUuId
 });
 
 try {

@@ -13,7 +13,7 @@ const userSchema = new Schema({
     phoneNumber : { type : Number, required : true},
     nationality : { type : String},
     country : { type : String},
-    dob : { type : Date },
+    dob : { type : String },
     nickname : { type : String},
     gender: { type : String},
     authToken :{ type : String},
