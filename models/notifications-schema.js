@@ -23,8 +23,7 @@ const notificationSchema = new Schema({
      roomId : { type : String, default :'trade' },
      isRead : { type : Boolean, default : 'false'},
      coversations: [{ type: mongoose.Types.ObjectId,  ref: 'Room'}],
-
-
+     
 
     creator: { type: mongoose.Types.ObjectId,  ref: 'User'}
 });

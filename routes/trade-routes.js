@@ -14,7 +14,7 @@ router.get('/', (req, res, next) => {
 
 //router.post('/sendTradeRequest', checkAuth ,tradeController.sendTradeRequest)
 
-router.get('/acceptTrade/:id' ,tradeController.acceptTrade);
+router.get('/acceptTrade/:id' ,checkAuth,tradeController.acceptTrade);
 
 router.get('/confirmTrade/:id',checkAuth ,tradeController.confirmTradeRequest);
 

@@ -203,6 +203,13 @@ const HttpError = require("../middleware/http-error");
 const acceptTrade = async (req, res ,next) => {
  
  
+  //user logged data
+  const LoggedUser = req.userData;
+  const LoggedUserID = req.userData.userId;
+
+  console.log(LoggedUser.email)
+
+  const LoggedUserFcmToken = LoggedUser.fcmToken;
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -396,6 +403,7 @@ try {
   
     const UserNickname = user.nickname;
     const UserFcmToken = user.fcmToken;
+    const UserCountryCode = user.countryTwoLetterCode;
     console.log(senderId)
 
 
@@ -422,6 +430,13 @@ try {
   
     const senderUserNickname = userWhoRecivedRequest.nickname;
     
+
+   let msg =[]
+   let details = `hi , ${UserNickname} your Trade Request has been accepted ,You can now Intiate the Chat with ${senderUserNickname}, to know more"`
+
+  // message = `"your message : ${productTitle}, ${productDescription}"`
+
+   msg.push(details)
 
 
   var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
@@ -452,17 +467,20 @@ fcm.send(message, function(err, response){
 //creating notfication
 
  const createdNotification = new Notification({
-  message : message,
-  type : 'accepted',
-  roomId : RoomNotificationId
+  message : msg,
+  creator: LoggedUserID,
+  type : 'tradeResponse',
+  nickname : UserNickname,
+  flag :UserCountryCode,
+  roomId :RoomNotificationId
 });
 
 try {
   const sess = await mongoose.startSession();
   sess.startTransaction();
   await createdNotification.save({ session: sess });
-  userWhoRecivedRequest.notifications.push(createdNotification);
-  await userWhoRecivedRequest.save({ session: sess });
+  user.notifications.push(createdNotification);
+  await user.save({ session: sess });
   await sess.commitTransaction();
 
 
@@ -1136,7 +1154,7 @@ const sendMessageToUser = async(req, res, next) => {
 
       let latestMessage;
       try {
-         latestMessage = await Room.findOne({  "roomId": RoomId }).sort( { chats: 1 } ).populate({ path: 'chats.userId', select: '_id' });
+         latestMessage = await Room.findOne({  "roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
       }
       catch (err) {
         const error = new HttpError('loading  message failed, please try again', 500);
