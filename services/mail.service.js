@@ -1,5 +1,5 @@
-const config  = require('../config/index');
-const nodemailer = require('nodemailer');
+const config = require("../config/index");
+const nodemailer = require("nodemailer");
 // sgMail.setApiKey('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');
 
 // const sendEmail = async (to, html) => {
@@ -20,100 +20,99 @@ const nodemailer = require('nodemailer');
 //   }
 // };
 
-
 //node mailer
 
-const sendEmail = async (to,html) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'siva.codesoftic@gmail.com',
-          pass: 'Codesoftic@08'
-        }
-      });
-      
-      let mailOptions = {
-        from: 'siva.codesoftic@gmail.com',
-        to,
-        subject: 'Email verfication ',
-        text: 'few steps !',
-        html
-      };
-      
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-}
+const sendEmail = async (to, html) => {
+  let transporter = nodemailer.createTransport({
+    host: "badilnyint.com",
+    port: 25,
+    secure: false,
+    auth: {
+      user: "care@badilnyint.com",
+      pass: "carecare",
+    },
+  });
 
+  let mailOptions = {
+    from: "mail@badilnyint.com",
+    to,
+    subject: "Email verfication ",
+    text: "few steps !",
+    html,
+  };
 
-const sendEmailOtpLink = async (to,token) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'siva.codesoftic@gmail.com',
-          pass: 'Codesoftic@08'
-        }
-      });
-      
-      let mailOptions = {
-        from: 'siva.codesoftic@gmail.com',
-        to,
-        subject: 'Email verfication ',
-        text: 'few steps !',
-        html:`
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
+
+const sendEmailOtpLink = async (to, token) => {
+  let transporter = nodemailer.createTransport({
+    port: 25,
+    secure: false,
+    auth: {
+      user: "care@badilnyint.com",
+      pass: "carecare",
+    },
+  });
+
+  let mailOptions = {
+    from: "mail@badilnyint.com",
+    to,
+    subject: "Email verfication ",
+    text: "few steps !",
+    html: `
         <h3>You have requested link for password reseting  </h3>
         <h4>Click in this <a href="${process.env.SERVER}/reset/:${token}">link to</a> to Reset Your Password</h4>
         <p>your token </p>
         <p> ${token} </p>
-        `
-      };
-      
-      transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-}
+        `,
+  };
 
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
 
-const sendEmailLink = async (to,token) => {
+const sendEmailLink = async (to, token) => {
   let transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'siva.codesoftic@gmail.com',
-        pass: 'Codesoftic@08'
-      }
-    });
-    
-    let mailOptions = {
-      from: 'siva.codesoftic@gmail.com',
-      to,
-      subject: 'Email verfication ',
-      text: 'few steps !',
-      html:`
+    port: 25,
+    secure: false,
+    auth: {
+      user: "care@badilnyint.com",
+      pass: "carecare",
+    },
+  });
+
+  let mailOptions = {
+    from: "mail@badilnyint.com",
+    to,
+    subject: "Email verfication ",
+    text: "few steps !",
+    html: `
       <h3>email for account activation  </h3>
       <h4>Click in this <a href="${process.env.SERVER}/reset/:${token}">link to</a> to Reset Your Password</h4>
       <p>your token </p>
       <p> ${token} </p>
-      `
-    };
-    
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
-}
+      `,
+  };
 
-
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+};
 
 exports.sendEmailOtpLink = sendEmailOtpLink;
 exports.sendEmail = sendEmail;

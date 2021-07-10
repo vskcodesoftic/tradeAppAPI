@@ -4,7 +4,7 @@ dotenv.config();
 
 const config = {
   mailOptions: {
-    from: 'siva.codesoftic@gmail.com',
+    from: 'care@gmail.com',
     signup: {
       subject: 'Verify your badinly account',
       text: 'Hello world',

@@ -1,8 +1,8 @@
 
  const signupHTML = (name, otp, email) => `
 <h2>Hi, ${name} </h2>
-<h3>Your verification OTP is ${otp}</h3>
-<a href="http://localhost:8001/api/user/emailVerify/?otpId=${otp}&emailId=${email}">click for verfication</a>
+<h3>Please Verify your account !</h3>
+<a href="http://badilnyint.com/api/user/emailVerify/?otpId=${otp}&emailId=${email}">click for verfication</a>
 `;
  const forgetHTML = (name, otp) => `
 <h2>Hi, ${name} </h2>
@@ -18,8 +18,8 @@ const addAdminMail = (name, otp, password) => `
 
 //logi ttemp
 const loginMailHTML = (otp, email) => `
-<h3>Your verification OTP is ${otp} </h3>
-<a href="http://localhost:8001/api/user/emailVerify/?otpId=${otp}&emailId=${email}">click for verfication</a>
+<h3>Kindly verify your email</h3>
+<a href="http://badilnyint.com/api/user/emailVerify/?otpId=${otp}&emailId=${email}">click for verfication</a>
 
 `;
 
