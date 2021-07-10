@@ -212,69 +212,6 @@ const deleteAdminById = async (req, res, next) => {
 
 };
   
-//update password
-
-const  updateAdminPassword = async(req, res, next) => {
-  const errors = validationResult(req);
-  if(!errors.isEmpty()){
-      console.log(errors);
-      const error =  new HttpError("invalid input are passed,please pass valid data",422)
-      return next(error)
-  }
-  const { email, oldpassword , newpassword } = req.body;
-
-  let user
-  try{
-       user = await Admin.findOne({ email : email  })
-  }
-  catch(err){
-      const error = await new HttpError("something went wrong,update password in failed",500)
-      return next(error)
-  }
-
-  if(!user){
-      const error = new HttpError("user not found could not update password",401)
-      return next(error)
-  }
-
- let isValidPassword = false; 
- try{
-       isValidPassword = await bcrypt.compare(oldpassword, user.password)
- }
- catch(err){
-  const error = await new HttpError("invalid password try again",500)
-  return next(error)
-}
-
-
-if(!isValidPassword){
-  const error = new HttpError("invalid old password could not update newpassword",401)
-  return next(error)
-}
-
-let hashedPassword;
-
-try{
-hashedPassword = await bcrypt.hash(newpassword, 12)
-let founduser;
-founduser = await User.findOne({ email : email  })
-
-let updatedRecord = {
-   password: hashedPassword
-}
-
-User.findByIdAndUpdate(founduser, { $set: updatedRecord },{new:true}, (err, docs) => {
-   if (!err) res.json({mesage : "password updated sucessfully"})
-   else console.log('Error while updating a record : ' + JSON.stringify(err, undefined, 2))
-})
-} 
-catch(err){
-  const error = new HttpError("could not updated hash of user ",500);
-  return next(error)
-}
-
-
-}
 
 
 //update user by id
@@ -1211,6 +1148,68 @@ SubcategoriesArray.push(Subcategories)
 }
 
 
+
+const  updateAdminPassword = async(req, res, next) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+      console.log(errors);
+      const error =  new HttpError("invalid input are passed,please pass valid data",422)
+      return next(error)
+  }
+  const { email, oldpassword , newpassword } = req.body;
+
+  let user
+  try{
+       user = await Admin.findOne({ email : email  })
+  }
+  catch(err){
+      const error = await new HttpError("something went wrong,update password in failed",500)
+      return next(error)
+  }
+
+  if(!user){
+      const error = new HttpError("user not found could not update password",401)
+      return next(error)
+  }
+
+ let isValidPassword = false; 
+ try{
+       isValidPassword = await bcrypt.compare(oldpassword, user.password)
+ }
+ catch(err){
+  const error = await new HttpError("invalid password try again",500)
+  return next(error)
+}
+
+
+if(!isValidPassword){
+  const error = new HttpError("invalid old password could not update newpassword",401)
+  return next(error)
+}
+
+let hashedPassword;
+
+try{
+hashedPassword = await bcrypt.hash(newpassword, 12)
+let founduser;
+founduser = await Admin.findOne({ email : email  })
+
+let updatedRecord = {
+   password: hashedPassword
+}
+
+Admin.findByIdAndUpdate(founduser, { $set: updatedRecord },{new:true}, (err, docs) => {
+   if (!err) res.json({mesage : "password updated sucessfully"})
+   else console.log('Error while updating a record : ' + JSON.stringify(err, undefined, 2))
+})
+} 
+catch(err){
+  const error = new HttpError("could not updated hash of user ",500);
+  return next(error)
+}
+
+
+}
   exports.createPlan = createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;

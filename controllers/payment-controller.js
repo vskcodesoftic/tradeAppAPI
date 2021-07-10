@@ -200,11 +200,11 @@ const createBasicPayment = async (req, res, next) => {
         total_price: identifiedPrice,  
         CurrencyCode:'USD',
       //  success_url:process.env.SUCCESS_URL,
-        error_url: `http://badilnyint.com/api/payment/errorUrl`,
+        error_url: `https://badilnyint.com/api/payment/errorUrl`,
         test_mode:'',
         CstFName : "test",
         CstEmail : "testing@gmail.com",
-        success_url :`http://badilnyint.com/api/payment/successUrl/:${postId}/creator/:${cId}`
+        success_url :`https://badilnyint.com/api/payment/successUrl/:${postId}/creator/:${cId}`
 
       })
       .then(async (response) =>{
