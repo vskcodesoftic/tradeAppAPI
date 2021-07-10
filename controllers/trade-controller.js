@@ -1081,6 +1081,11 @@ const sendMessageToUser = async(req, res, next) => {
 
   //user id from body
   const userId = req.userData.userId;
+
+  //user logged data
+  const LoggedUser = req.userData;
+  const LoggedUserID = req.userData.userId;
+  
    console.log(userId)
   const {
     RoomId,   // productID
@@ -1109,7 +1114,11 @@ const sendMessageToUser = async(req, res, next) => {
   }
 
   const userName = user.name;
-   const userID = userId;
+  const userID = userId;
+
+  const countryCode =user.countryTwoLetterCode;
+  const Nickname = user.nickname;
+
     //save database if room id matches to on room model
     try {
       await Room.updateOne({ "roomId": RoomId }, {
@@ -1118,7 +1127,9 @@ const sendMessageToUser = async(req, res, next) => {
           partcipants : `${userID}`,
           chats: [{
             userId: userID,
-            message: message
+            message: message,
+            countryTwoLetterCode :countryCode ,
+            nickname :Nickname
           }]
       }
      })
@@ -1147,6 +1158,8 @@ const sendMessageToUser = async(req, res, next) => {
 
     const getAllMesageBasedOnRoomId = async (req ,res ,next) => {
      
+
+  
       const {
         RoomId  // productID
   
@@ -1154,7 +1167,7 @@ const sendMessageToUser = async(req, res, next) => {
 
       let latestMessage;
       try {
-         latestMessage = await Room.findOne({  "roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
+         latestMessage = await Room.find({  "roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
       }
       catch (err) {
         const error = new HttpError('loading  message failed, please try again', 500);

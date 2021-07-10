@@ -18,6 +18,13 @@ const roomSchema = new Schema({
         message: {
             type: String
         },
+ 
+        countryTwoLetterCode: {
+            type: String
+        },
+        nickname: {
+            type: String
+        },
         time: {
             type: Date,
             default: new Date
