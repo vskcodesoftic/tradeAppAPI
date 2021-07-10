@@ -26,7 +26,7 @@ router.post('/signup',
   check('gender').not().isEmpty(),
   check('country').not().isEmpty(),
   check('nickname').not().isEmpty(),
-  check('countryCode').isLength({min :2 , max:2}),
+  check('countryCode').isLength({min :2 , max:4}),
   check('phoneNumber').not().isEmpty(), 
 ],userController.createUser);
 

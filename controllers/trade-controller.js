@@ -347,6 +347,7 @@ try {
   return next(error);
 }
 
+
 //setting product expiry 15days
 product.isShow = "false";
 product.isFeatured="false";
@@ -947,7 +948,18 @@ const confirmTradeRequest = async (req, res ,next) => {
    //let productIds = []
    //let productIds = await {offeredProductId}
    
- 
+   let ProductOffredName ;
+   let ProductOffredCountry ;
+   let ProductOffredCountryCode ;
+   let ProductOffredNickname ;
+   let ProductOffredNation;
+   let productTitle;
+   let ProducOffredFcmToken;
+   let productCreator;
+
+   let user;
+
+
    // finding the productId of provided
    let notification;
    try {
@@ -971,6 +983,8 @@ const confirmTradeRequest = async (req, res ,next) => {
    
    notification.isRead ="true";
    notification.type ="Declined";
+
+   const FoundRoomID = notification.roomId;
  
    try {
      await notification.save();
@@ -1027,7 +1041,7 @@ const confirmTradeRequest = async (req, res ,next) => {
          500
        );
        return next(error);
-     }
+       }
  
  
       //second
@@ -1054,7 +1068,36 @@ const confirmTradeRequest = async (req, res ,next) => {
        product.isShow = "true";
        product.isFeatured="true";
        product.status="active";
- 
+       
+        productTitle =product.title;
+  
+        productCreator =product.creator
+       console.log("creator",productCreator)
+       console.log("product title", productTitle)
+
+        //productOfferedUser
+        user;
+       try {
+           user = await User.findById(productCreator);
+         }
+            catch (err) {
+         const error = new HttpError('Creating product failedl, please try again', 500);
+         console.log("error ")
+         return next(error);
+       }
+     
+       if (!user) {
+         const error = new HttpError('Could not find user for provided id', 404);
+         return next(error);
+       }
+       
+       ProductOffredName = user.name;
+      const ProductOffredCountry = user.country;
+      const ProductOffredCountryCode = user.countryTwoLetterCode;
+      const ProductOffredNickname = user.nickname;
+      const ProductOffredNation = user.nationality;
+      ProducOffredFcmToken = user.fcmToken;
+     
 
        try {
          await product.save();
@@ -1069,6 +1112,72 @@ const confirmTradeRequest = async (req, res ,next) => {
    
      }
 
+    
+     let msg =[]
+     let details = `"hi , ${ProductOffredName} your Trade Request has been Declined , for product ${productTitle}"`
+  
+    // message = `"your message : ${productTitle}, ${productDescription}"`
+  
+     msg.push(details)
+  
+  
+    var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+      to: `${ProducOffredFcmToken}`,
+      
+      notification: {
+          title: `hi , ${ProductOffredName} your Trade Request has been decliend ` , 
+          body: `, for product ${productTitle}"`
+      },
+      
+  };
+  
+  
+  
+  
+  fcm.send(message, function(err, response){
+    if (err) {
+        console.log("Something has gone wrong!",err);
+    } else {
+        
+        console.log("Successfully sent with response: ", response);
+    }
+  });
+  
+  
+  
+  
+  
+  
+  //creating notfication
+  
+   const createdNotification = new Notification({
+    message : msg,
+    creator: productCreator,
+    type : 'Declined',
+    nickname : ProductOffredName,
+    flag :ProductOffredCountryCode,
+    roomId :FoundRoomID
+  });
+  
+  try {
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdNotification.save({ session: sess });
+    user.notifications.push(createdNotification);
+    await user.save({ session: sess });
+    await sess.commitTransaction();
+  
+  
+  
+  
+  } catch (err) {
+      console.log(err)
+    const error = new HttpError(
+      'Creating notfication failed, please try again.',
+      500
+    );
+    return next(error);
+  }
 
    
 
@@ -1166,9 +1275,11 @@ const sendMessageToUser = async(req, res, next) => {
       } = req.body;
 
       let latestMessage;
+
       try {
-         latestMessage = await Room.find({  "roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
+         latestMessage = await Room.find({"roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
       }
+
       catch (err) {
         const error = new HttpError('loading  message failed, please try again', 500);
         console.log(err)
