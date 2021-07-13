@@ -21,6 +21,7 @@ const FCM = require('fcm-node')
 const serverKey = require('../firebase/config/firebasecred.json') //put the generated private key path here      
 const fcm = new FCM(serverKey)
 const HttpError = require("../middleware/http-error");
+const { Console } = require("console");
 
 
 // const sendTradeRequest = async (req, res, next) => {
@@ -1263,31 +1264,83 @@ const sendMessageToUser = async(req, res, next) => {
      
     }
 
-    //get  all the mesagges by user id
+  //get  all the mesagges by user id
 
-    const getAllMesageBasedOnRoomId = async (req ,res ,next) => {
-     
+  const getAllMesageBasedOnRoomId = async (req ,res ,next) => {
+    
 
-  
-      const {
-        RoomId  // productID
-  
-      } = req.body;
 
-      let latestMessage;
+    const {
+      RoomId  // productID
 
-      try {
-         latestMessage = await Room.find({"roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
-      }
+    } = req.body;
 
-      catch (err) {
-        const error = new HttpError('loading  message failed, please try again', 500);
-        console.log(err)
-        return next(error);
-      }
-      res.json({ chats : latestMessage})
+    let latestMessage;
+
+    try {
+        latestMessage = await Room.find({"roomId": RoomId }).sort().populate({ path: 'chats.userId', select: '_id' });
     }
 
+    catch (err) {
+      const error = new HttpError('loading  message failed, please try again', 500);
+      console.log(err)
+      return next(error);
+    }
+    res.json({ chats : latestMessage})
+  }
+
+
+  //get list of Confirmed trades 
+  const getListofConfirmedTrades = async (req , res ,next) => {
+    let trades
+    try{
+        trades = await Notification.find({ $and: [ { type: "Confirmed" } ] },{ productID: 1, productsOffered: 1, type: 1 , _id: 0 } )
+        if (!trades || trades.length === 0) {
+          return next(
+            new HttpError('there are no trades with this type', 404)
+          );
+        }
+      
+    }
+    catch(err){
+        const error = new HttpError("can not fetch trades by provided type, something went wrong",500)
+        return next(error)
+    }
+    
+
+    
+
+    res.json({ trades : trades })
+
+
+  }
+
+
+    //get list of Declined trades 
+    const getListofDeclinedTrades = async (req , res ,next) => {
+      let trades
+      try{
+          trades = await Notification.find({ type: "Declined" },{ productID: 1, productsOffered: 1, type: 1 , _id: 0 } )
+          if (!trades || trades.length === 0) {
+            return next(
+              new HttpError('there are no trades with this type', 404)
+            );
+          }
+        
+      }
+      catch(err){
+          const error = new HttpError("can not fetch trades by provided type, something went wrong",500)
+          return next(error)
+      }
+      
+  
+      
+  
+      res.json({ trades : trades })
+  
+  
+    }
+  
 
 //exports.sendTradeRequest = sendTradeRequest;
 exports.acceptTrade = acceptTrade;
@@ -1298,3 +1351,5 @@ exports.rejectTradeRequest = rejectTradeRequest;
 exports.sendMessageToUser = sendMessageToUser;
 
 exports.getAllMesageBasedOnRoomId = getAllMesageBasedOnRoomId;
+
+exports.getListofConfirmedTrades = getListofConfirmedTrades;

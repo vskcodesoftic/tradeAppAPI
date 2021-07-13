@@ -597,7 +597,7 @@ const createProduct = async (req, res, next) => {
         await user.save({ session: sess });
         await sess.commitTransaction();
      
-        await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -2, isFeatured : false  } });
+        await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -2,  userType : "Vendor" , isFeatured : false  } });
   
   
   
@@ -625,7 +625,7 @@ const createProduct = async (req, res, next) => {
           await user.save({ session: sess });
           await sess.commitTransaction();
        
-          await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -1 , isFeatured : true }});
+          await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -1 , userType : "Vendor", isFeatured : true }});
     
     
     
@@ -819,6 +819,58 @@ const getNotificationsByUserID = async (req ,res ,next ) => {
 
 
 
+//users registered but did not post an item
+   const getListofCustomers = async (req , res ,next) => {
+    let users
+    try{
+        users = await User.find({ userType: "Customer" },{ name: 1, email: 1, userType: 1 ,isVerified :1, nationality :1, _id: 0 } )
+        if (!users || users.length === 0) {
+          return next(
+            new HttpError('there are no users with this type', 404)
+          );
+        }
+      
+    }
+    catch(err){
+        const error = new HttpError("can not fetch users by provided type, something went wrong",500)
+        return next(error)
+    }
+    
+
+    
+
+    res.json({ users : users })
+
+
+  }
+
+
+//getListofVendors registered but did not post an item 
+const getListofVendors = async (req , res ,next) => {
+  let users
+  try{
+      users = await User.find({ userType: "Vendor" },{ name: 1, email: 1, userType: 1 ,isVerified :1, nationality :1, _id: 0 } )
+      if (!users || users.length === 0) {
+        return next(
+          new HttpError('there are no users with this type', 404)
+        );
+      }
+    
+  }
+  catch(err){
+      const error = new HttpError("can not fetch users by provided type, something went wrong",500)
+      return next(error)
+  }
+  
+
+  
+
+  res.json({ users : users })
+
+
+}
+
+
 //user signup
 exports.createUser =  createUser;
 //user login
@@ -853,3 +905,11 @@ exports.getUserInfo = getUserInfo;
 
 //email verfication
 exports.EmailotpVerify = EmailotpVerify;
+
+//get list of customers
+exports.getListofCustomers = getListofCustomers;
+
+//get list of vendors
+exports.getListofVendors = getListofVendors;
+
+

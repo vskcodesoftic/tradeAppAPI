@@ -25,8 +25,8 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (to, html) => {
   let transporter = nodemailer.createTransport({
     host: "badilnyint.com",
-    port: 25,
-    secure: false,
+    port: 587,
+    secure: true,
     auth: {
       user: "care@badilnyint.com",
       pass: "carecare",
@@ -34,7 +34,7 @@ const sendEmail = async (to, html) => {
   });
 
   let mailOptions = {
-    from: "mail@badilnyint.com",
+    from: "care@badilnyint.com",
     to,
     subject: "Email verfication ",
     text: "few steps !",
@@ -52,8 +52,7 @@ const sendEmail = async (to, html) => {
 
 const sendEmailOtpLink = async (to, token) => {
   let transporter = nodemailer.createTransport({
-    port: 25,
-    secure: false,
+    port: 587,
     auth: {
       user: "care@badilnyint.com",
       pass: "carecare",
@@ -61,7 +60,7 @@ const sendEmailOtpLink = async (to, token) => {
   });
 
   let mailOptions = {
-    from: "mail@badilnyint.com",
+    from: "care@badilnyint.com",
     to,
     subject: "Email verfication ",
     text: "few steps !",
@@ -84,7 +83,7 @@ const sendEmailOtpLink = async (to, token) => {
 
 const sendEmailLink = async (to, token) => {
   let transporter = nodemailer.createTransport({
-    port: 25,
+    port: 465,
     secure: false,
     auth: {
       user: "care@badilnyint.com",

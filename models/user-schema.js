@@ -31,8 +31,8 @@ const userSchema = new Schema({
     isVerified : { type: Boolean, default: false },
     Balance : {type :Number , default : "0"},
     planexpireToken:{ type:Date },
-    otpHex: { type: String }
-
+    otpHex: { type: String },
+    userType : { type : String, default : "Customer"}
    
 }, { versionKey: false });
 

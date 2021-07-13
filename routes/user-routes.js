@@ -63,6 +63,10 @@ userController.getNotificationsByUserID);
 //email verfication
 router.get('/emailVerify',userController.EmailotpVerify);
 
+router.get('/getListOfCustomers', userController.getListofCustomers);
+
+router.get('/getListofVendors', userController.getListofVendors);
+
 
 router.all(
   "/me",checkAuth,

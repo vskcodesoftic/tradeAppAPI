@@ -29,4 +29,6 @@ router.post('/sendMessage', checkAuth , tradeController.sendMessageToUser);
 
 router.post('/getMessages', checkAuth , tradeController.getAllMesageBasedOnRoomId);
 
+router.get('/getAllTrades', tradeController.getListofConfirmedTrades);
+
 module.exports = router;

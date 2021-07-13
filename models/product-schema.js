@@ -14,7 +14,7 @@ const productSchema = new Schema({
     productid :{ type: String},
     isFeatured : {type : Boolean },
     isShow : {type : Boolean, default : true },
-    status : { type : String  ,default:'active'},
+    status : { type : String  ,default:'inactive'},
     resetToken:{ type:String },
     expireToken:{ type:Date },
     nickname: {type :String},

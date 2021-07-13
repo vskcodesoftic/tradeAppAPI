@@ -1,0 +1,12 @@
+context / {
+  type                    appserver
+  location                /home/badilnyint.com/public_html
+  binPath                 /usr/bin/node
+  appType                 node
+  maxConns                100
+ 
+  rewrite  {
+ 
+  }
+  addDefaultCharset       off
+}
