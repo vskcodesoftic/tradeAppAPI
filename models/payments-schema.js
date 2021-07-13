@@ -16,6 +16,8 @@ const paymentSchema = new Schema({
     PaymentID : { type : String},
     Ref : { type : String},
     PostDate : { type : String},
+    planType : { type :String},
+    DateOfSub : { type :Date, default :Date.now()},
 
 
 

@@ -1290,11 +1290,11 @@ const sendMessageToUser = async(req, res, next) => {
   }
 
 
-  //get list of Confirmed trades 
-  const getListofConfirmedTrades = async (req , res ,next) => {
+  //get list of  trades 
+  const getListofTrades = async (req , res ,next) => {
     let trades
     try{
-        trades = await Notification.find({ $and: [ { type: "Confirmed" } ] },{ productID: 1, productsOffered: 1, type: 1 , _id: 0 } )
+        trades = await Notification.find({ },{ productID: 1, productsOffered: 1, message : 1, type: 1 , _id: 0 } )
         if (!trades || trades.length === 0) {
           return next(
             new HttpError('there are no trades with this type', 404)
@@ -1342,6 +1342,58 @@ const sendMessageToUser = async(req, res, next) => {
     }
   
 
+    //no of confirmed trades
+const getConfirmedTradesCount = async (req ,res ,next) => {
+
+
+  let trades
+try{
+    trades = await Notification.find({type : "Confirmed" }).countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch trades request",500)
+    return next(error)
+}
+res.json({ trades : trades})
+
+
+}
+
+//no of declined trades
+const GetDeclinedTradesCount = async (req ,res ,next) => {
+
+
+  let trades
+try{
+    trades = await Notification.find({type : "Declined" }).countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch trades request",500)
+    return next(error)
+}
+res.json({ trades : trades})
+
+
+}
+
+//no of GettradeRequestTradesCount trades
+const GettradeRequestTradesCount = async (req ,res ,next) => {
+
+
+let trades
+try{
+  trades = await Notification.find({type : "tradeRequest" }).countDocuments()
+}
+catch(err){
+  const error = new HttpError("can not fetch trades request",500)
+  return next(error)
+}
+res.json({ trades : trades})
+
+
+}
+  
+
 //exports.sendTradeRequest = sendTradeRequest;
 exports.acceptTrade = acceptTrade;
 exports.confirmTradeRequest =confirmTradeRequest;
@@ -1352,4 +1404,8 @@ exports.sendMessageToUser = sendMessageToUser;
 
 exports.getAllMesageBasedOnRoomId = getAllMesageBasedOnRoomId;
 
-exports.getListofConfirmedTrades = getListofConfirmedTrades;
+exports.getListofTrades = getListofTrades;
+
+exports.getConfirmedTradesCount = getConfirmedTradesCount;
+exports.GetDeclinedTradesCount = GetDeclinedTradesCount;
+exports.GettradeRequestTradesCount = GettradeRequestTradesCount;

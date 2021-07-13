@@ -146,6 +146,16 @@ const createBasicPayment = async (req, res, next) => {
     }
     
 
+    const CreatorEmail = user.email;
+    const CreatorName = user.name;
+
+    const dateHumanReadable = new Date();
+    
+    const dateFullYear = dateHumanReadable.getFullYear();
+    const dateFullMonth =dateHumanReadable.getMonth();
+    const dateFullDay = dateHumanReadable.getDay();
+
+    const FullDATE = `${dateFullDay}/${dateFullMonth}/${dateFullYear}`
 
   console.log(planType)
 
@@ -212,10 +222,11 @@ const createBasicPayment = async (req, res, next) => {
           const createdPlan = new Payment({
             order_id : OrderId,
             total_price : identifiedPrice,
-            CstFName ,
-            CstEmail,
+            CstFName :CreatorName,
+            CstEmail:CreatorEmail,
             CstMobile,
             ProductTitle,
+            planType,
             creator 
          })
 
