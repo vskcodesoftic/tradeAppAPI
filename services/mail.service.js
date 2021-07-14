@@ -25,16 +25,29 @@ const nodemailer = require("nodemailer");
 const sendEmail = async (to, html) => {
   let transporter = nodemailer.createTransport({
     host: "badilnyint.com",
-    port: 587,
-    secure: true,
+    // port: 587,
+      secure: false, // use SSL
+      port: 587, // port for secure SMTP
     auth: {
-      user: "care@badilnyint.com",
-      pass: "carecare",
+      user: "no-reply@badilnyint.com",
+      pass: "Codesoftic@08",
     },
+    tls: {
+      rejectUnauthorized: false
+  }
   });
 
+  // verify connection configuration
+transporter.verify(function(error, success) {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log("Server is ready to take our messages");
+  }
+});
+
   let mailOptions = {
-    from: "care@badilnyint.com",
+    from: "no-reply@badilnyint.com",
     to,
     subject: "Email verfication ",
     text: "few steps !",
@@ -53,14 +66,18 @@ const sendEmail = async (to, html) => {
 const sendEmailOtpLink = async (to, token) => {
   let transporter = nodemailer.createTransport({
     port: 587,
+    secure: false,
     auth: {
-      user: "care@badilnyint.com",
-      pass: "carecare",
+      user: "no-reply@badilnyint.com",
+      pass: "Codesoftic@08",
     },
+    tls: {
+      rejectUnauthorized: false
+  }
   });
 
   let mailOptions = {
-    from: "care@badilnyint.com",
+    from: "no-reply@badilnyint.com",
     to,
     subject: "Email verfication ",
     text: "few steps !",
@@ -83,16 +100,19 @@ const sendEmailOtpLink = async (to, token) => {
 
 const sendEmailLink = async (to, token) => {
   let transporter = nodemailer.createTransport({
-    port: 465,
+    port: 587,
     secure: false,
     auth: {
-      user: "care@badilnyint.com",
-      pass: "carecare",
+      user: "no-reply@badilnyint.com",
+      pass: "Codesoftic@08",
     },
+    tls: {
+      rejectUnauthorized: false
+  }
   });
 
   let mailOptions = {
-    from: "mail@badilnyint.com",
+    from: "no-reply@badilnyint.com",
     to,
     subject: "Email verfication ",
     text: "few steps !",
