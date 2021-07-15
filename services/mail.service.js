@@ -24,17 +24,19 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (to, html) => {
   let transporter = nodemailer.createTransport({
-    host: "badilnyint.com",
-    // port: 587,
-      secure: false, // use SSL
+    host: "panel.badilnyint.com",
       port: 587, // port for secure SMTP
+      secure: false,
     auth: {
       user: "no-reply@badilnyint.com",
       pass: "Codesoftic@08",
     },
     tls: {
-      rejectUnauthorized: false
-  }
+      // do not faFil on invalid certs
+      rejectUnauthorized: true
+  },
+  // logger: true,
+  // debug: true,
   });
 
   // verify connection configuration
@@ -57,8 +59,9 @@ transporter.verify(function(error, success) {
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
+
     } else {
-      console.log("Email sent: " + info.response);
+      console.log("Message sent: " + info.response);
     }
   });
 };
@@ -71,9 +74,6 @@ const sendEmailOtpLink = async (to, token) => {
       user: "no-reply@badilnyint.com",
       pass: "Codesoftic@08",
     },
-    tls: {
-      rejectUnauthorized: false
-  }
   });
 
   let mailOptions = {
@@ -106,9 +106,6 @@ const sendEmailLink = async (to, token) => {
       user: "no-reply@badilnyint.com",
       pass: "Codesoftic@08",
     },
-    tls: {
-      rejectUnauthorized: false
-  }
   });
 
   let mailOptions = {

@@ -59,7 +59,9 @@ app.use(cors());
 app.set('view engine', 'ejs');
 
 //body parsing jsonData
-app.use(bodyParser.json())
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 
 //routes
 
@@ -121,6 +123,7 @@ app.use((error, req, res, next) => {
     res.status(error.code || 500)
     res.json({message: error.message || 'An unknown error occurred!'});
   });
+
 
 
   //socket emits

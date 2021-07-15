@@ -1,12 +1,18 @@
 const express = require('express');
 const { check } = require('express-validator')
 
+
+
 const router = express.Router();
 
 const userController = require('../controllers/user-controller')
 const fileUpload = require('../middleware/file-upload');
 
+const multiFileUpload = require('../middleware/multiFile-upload');
+
+
 const checkAuth = require('../middleware/authService');
+
 
 router.get('/', (req, res, next) => {
  
@@ -50,6 +56,15 @@ router.post('/otpVerify',userController.otpVerify);
 //post product
 router.post('/postItem', checkAuth ,fileUpload.single('image'),
 userController.createProduct);
+
+router.post('/postItems',multiFileUpload.array('image',12),(req,res,next)=>{
+  const files = req.files;
+  if(!files){
+    const error = new Error("please choose files");
+    return next(error)
+  }
+  res.send(files)
+ }) 
 
 //get user Balance 
 router.get('/getBalance', checkAuth ,

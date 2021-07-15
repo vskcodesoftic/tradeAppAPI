@@ -597,7 +597,7 @@ const createProduct = async (req, res, next) => {
         await user.save({ session: sess });
         await sess.commitTransaction();
      
-        await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -2,  userType : "Vendor" , isFeatured : false  } });
+        await User.findByIdAndUpdate({ _id : creator }, {userType : "Vendor" , $inc: { Balance: -2 , isFeatured : false  } });
   
   
   
@@ -625,7 +625,7 @@ const createProduct = async (req, res, next) => {
           await user.save({ session: sess });
           await sess.commitTransaction();
        
-          await User.findByIdAndUpdate({ _id : creator }, { $inc: { Balance: -1 , userType : "Vendor", isFeatured : true }});
+          await User.findByIdAndUpdate({ _id : creator }, {  userType : "Vendor" , $inc: { Balance: -1 , isFeatured : true }});
     
     
     
