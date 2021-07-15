@@ -63,7 +63,11 @@ router.post('/postItems',multiFileUpload.array('image',12),(req,res,next)=>{
     const error = new Error("please choose files");
     return next(error)
   }
-  res.send(files)
+  
+  files.forEach(element => 
+    console.log(element.path)
+    )
+  res.send(files[0].path)
  }) 
 
 //get user Balance 
