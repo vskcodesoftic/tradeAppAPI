@@ -19,6 +19,8 @@ const  Notification = require('../models/notifications-schema');
 
 const  Product = require('../models/product-schema');
 const FcmIds = require('../models/fcmids-schema');
+const Contact = require('../models/contactus-schema')
+
 
 const HttpError = require('../middleware/http-error');
 
@@ -952,6 +954,56 @@ res.json({ users : users})
 
 
 
+    //create contact us
+
+const ContactUs = async (req, res, next) => {
+  const errors = validationResult(req);
+  let InvalidInputTYPE =[]
+  let InvalidInputValue =[]
+
+  if(!errors.isEmpty()){
+    let ErrorsArray = errors.array()
+    ErrorsArray.map((err,i) => {
+      InvalidInputTYPE.push(`${err.param}`)
+      InvalidInputValue.push(`${err.value}`)
+
+    })
+
+    const error = new HttpError(
+      `invalid input types are : ${InvalidInputTYPE} , contains value : ${InvalidInputValue}`,500
+    );
+    return next(error);
+ }
+  const { Name, Number, Email ,Subject ,Message } = req.body;
+ 
+
+  const createdTicket = new Contact({
+      Name,
+      Number,
+      Email,
+      Subject,
+      Message
+   
+  })
+
+  try {
+      await createdTicket.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Creating Contact us failed, please try again.',
+        500
+      );
+      console.log(err)
+      return next(error);
+    }
+
+   
+  res.status(201).json({ contactUs : createdTicket })
+}
+
+
+
+
 //user signup
 exports.createUser =  createUser;
 //user login
@@ -1000,7 +1052,8 @@ exports.getListofUsers = getListofUsers;
 exports.getCustomerCount = getCustomerCount ;
 
 //get count of vendors
-exports.getVendorsCount = getListofVendors;
+exports.getVendorsCount = getVendorsCount;
 
 
-
+//createContactUs
+exports.ContactUs = ContactUs;

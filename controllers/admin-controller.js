@@ -16,7 +16,6 @@ const Payment = require('../models/payments-schema');
 const  Plan = require('../models/plans-schema');
 const Category = require('../models/category-schema');
 
-
 const HttpError = require('../middleware/http-error');
 
 const { v1: uuid } = require('uuid')
@@ -1210,6 +1209,10 @@ catch(err){
 
 
 }
+
+
+
+
   exports.createPlan = createPlan ;
   exports.getPlansList = getPlansList;
   exports.updatePlan = updatePlan;
