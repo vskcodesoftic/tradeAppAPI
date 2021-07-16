@@ -92,6 +92,10 @@ router.get('/getListofVendors', userController.getListofVendors);
 
 router.get('/getListofUsers', userController.getListofUsers);
 
+router.get('/getCustomerCount', userController.getCustomerCount);
+
+router.get('/getVendorsCount', userController.getVendorsCount);
+
 router.all(
   "/me",checkAuth,
   userController.getUserInfo

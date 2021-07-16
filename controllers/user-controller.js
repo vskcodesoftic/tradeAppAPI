@@ -916,6 +916,42 @@ const getListofUsers = async (req , res ,next) => {
 
 
 
+//no of customers count
+const getCustomerCount = async (req ,res ,next) => {
+
+
+  let users
+try{
+    users = await User.find({userType : "Customer" }).countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch users request",500)
+    return next(error)
+}
+res.json({ users : users})
+
+
+}
+
+    //no of vendors count
+    const getVendorsCount = async (req ,res ,next) => {
+
+
+      let vendors
+    try{
+        vendors = await User.find({userType : "Vendor" }).countDocuments()
+    }
+    catch(err){
+        const error = new HttpError("can not fetch vendors request",500)
+        return next(error)
+    }
+    res.json({ vendors : vendors})
+    
+    
+    }
+
+
+
 //user signup
 exports.createUser =  createUser;
 //user login
@@ -959,6 +995,12 @@ exports.getListofVendors = getListofVendors;
 
 //get list of users
 exports.getListofUsers = getListofUsers;
+
+//get count of customers
+exports.getCustomerCount = getCustomerCount ;
+
+//get count of vendors
+exports.getVendorsCount = getListofVendors;
 
 
 
