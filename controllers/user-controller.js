@@ -546,7 +546,7 @@ const createProduct = async (req, res, next) => {
       );
     }
   
-    const { title, description, modelNumber, category , subcategory ,isFeatured, quantity } = req.body;
+    const { title, description, modelNumber, category , subcategory ,recommendations ,isFeatured, quantity } = req.body;
   
      const creator = req.userData.userId;
 
@@ -576,6 +576,7 @@ const createProduct = async (req, res, next) => {
     description,
     modelNumber,
     category,
+    recommendations,
     subcategory,
     image:finalImages[0],
     imgOptOne :finalImages,

@@ -10,6 +10,7 @@ const productSchema = new Schema({
     imgOptOne : [{ type :String }],
     image : [{ type :String }],
     category : {type : String , required : true},
+    recommendations :  {type : String , required : true},
     quantity : { type : Number },
     subcategory : { type : String },
     productid :{ type: String},
