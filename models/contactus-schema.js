@@ -8,7 +8,7 @@ const contactUsSchema = new Schema({
     Email: { type: String, required: true },
     Message: { type: String , required: true},
     Subject :{ type:String },
-    Number:{ type:Number },
+    Number:{ type:Number ,required: true  },
    
 }, { versionKey: false });
 

@@ -618,7 +618,7 @@ const createProduct = async (req, res, next) => {
         await user.save({ session: sess });
         await sess.commitTransaction();
      
-        await User.findByIdAndUpdate({ _id : creator }, {userType : "Vendor" , $inc: { Balance: -2 , isFeatured : false  } });
+        await User.findByIdAndUpdate({ _id : creator }, {userType : "Vendor"  , isFeatured : true  , $inc: { Balance: -2 } });
   
   
   
@@ -646,7 +646,7 @@ const createProduct = async (req, res, next) => {
           await user.save({ session: sess });
           await sess.commitTransaction();
        
-          await User.findByIdAndUpdate({ _id : creator }, {  userType : "Vendor" , $inc: { Balance: -1 , isFeatured : true }});
+          await User.findByIdAndUpdate({ _id : creator }, {  userType : "Vendor" , isFeatured : false });
     
     
     
@@ -659,7 +659,7 @@ const createProduct = async (req, res, next) => {
           return next(error);
         }
       
-        res.status(201).json({ product: createdProduct });
+        res.status(201).json({ product: createdProduct , Balance : user.Balance});
        }
   
    
@@ -1003,6 +1003,28 @@ const ContactUs = async (req, res, next) => {
   res.status(201).json({ contactUs : createdTicket })
 }
 
+  //get contact us
+
+  const getContactUs = async (req, res, next) => {
+    let ticket
+try{
+    ticket = await Contact.find( { })
+    if (!ticket || ticket.length === 0) {
+      return next(
+        new HttpError('there are no ticket ', 404)
+      );
+    }
+  
+}
+catch(err){
+    console.log(err)
+    const error = new HttpError("can not fetch ticket , something went wrong",500)
+    return next(error)
+  
+}
+  res.json({ contactUs : ticket})
+  }
+  
 
 
 
@@ -1059,3 +1081,6 @@ exports.getVendorsCount = getVendorsCount;
 
 //createContactUs
 exports.ContactUs = ContactUs;
+
+//get contact
+exports.getContactUs = getContactUs;

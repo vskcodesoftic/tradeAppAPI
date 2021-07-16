@@ -96,7 +96,9 @@ router.get('/getCustomerCount', userController.getCustomerCount);
 
 router.get('/getVendorsCount', userController.getVendorsCount);
 
-router.post('/createContact',[  check('Name').not().isEmpty(),check('Email').isEmail(), check('Message').not().isEmpty(), check('Number').not().isEmpty()], userController.ContactUs);
+router.post('/createContact',[  check('Name').not().isEmpty(),check('Number').not().isEmpty(),check('Email').isEmail(), check('Message').not().isEmpty(), check('Number').not().isEmpty()], userController.ContactUs);
+
+router.get('/getContactTickets', userController.getContactUs);
 
 router.all(
   "/me",checkAuth,
