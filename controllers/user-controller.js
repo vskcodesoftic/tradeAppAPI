@@ -521,6 +521,22 @@ const newPassword = async(req,res)=>{
 
 const createProduct = async (req, res, next) => {
     const errors = validationResult(req);
+
+   const files = req.files;
+   let finalImages = []
+   let imgPath ;
+
+   if(!files){
+    const error = new Error("please choose files");
+    return next(error)
+  }
+  
+  files.forEach(element => {
+    console.log(element.path)
+     imgPath = element.path;
+    finalImages.push(imgPath)
+  })
+
     if (!errors.isEmpty()) {
 
       return next(
@@ -559,7 +575,8 @@ const createProduct = async (req, res, next) => {
     modelNumber,
     category,
     subcategory,
-    image : req.file.path ,
+    image:finalImages[0],
+    imgOptOne :finalImages,
     creator,
     isFeatured,
     quantity,

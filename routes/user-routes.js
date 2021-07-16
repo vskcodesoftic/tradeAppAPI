@@ -54,20 +54,24 @@ router.post('/otpVerify',userController.otpVerify);
 
 
 //post product
-router.post('/postItem', checkAuth ,fileUpload.single('image'),
+router.post('/postItem', checkAuth ,multiFileUpload.array('imgOptOne',12),
 userController.createProduct);
 
 router.post('/postItems',multiFileUpload.array('image',12),(req,res,next)=>{
   const files = req.files;
+  let finalImages = []
+  let imgPath ;
   if(!files){
     const error = new Error("please choose files");
     return next(error)
   }
   
-  files.forEach(element => 
+  files.forEach(element => {
     console.log(element.path)
-    )
-  res.send(files[0].path)
+     imgPath = element.path;
+    finalImages.push(imgPath)
+  })
+  res.send(finalImages)
  }) 
 
 //get user Balance 
