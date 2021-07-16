@@ -531,9 +531,9 @@ const createProduct = async (req, res, next) => {
     return next(error)
   }
   
-  files.forEach(element => {
-    console.log(element.path)
-     imgPath = element.path;
+  files.forEach(img => {
+    console.log(img.path)
+     imgPath = img.path;
     finalImages.push(imgPath)
   })
 
@@ -887,6 +887,34 @@ const getListofVendors = async (req , res ,next) => {
 
 }
 
+//getListofUsers registered but did not post an item 
+const getListofUsers = async (req , res ,next) => {
+  let users
+  try{
+      users = await User.find( { },{ name: 1, email: 1 ,userType: 1,fcmToken :1, _id: 0 } )
+      if (!users || users.length === 0) {
+        return next(
+          new HttpError('there are no users ', 404)
+        );
+      }
+    
+  }
+  catch(err){
+      console.log(err)
+      const error = new HttpError("can not fetch users , something went wrong",500)
+      return next(error)
+    
+  }
+  
+
+  
+
+  res.json({ users : users })
+
+
+}
+
+
 
 //user signup
 exports.createUser =  createUser;
@@ -928,5 +956,9 @@ exports.getListofCustomers = getListofCustomers;
 
 //get list of vendors
 exports.getListofVendors = getListofVendors;
+
+//get list of users
+exports.getListofUsers = getListofUsers;
+
 
 

@@ -90,6 +90,7 @@ router.get('/getListOfCustomers', userController.getListofCustomers);
 
 router.get('/getListofVendors', userController.getListofVendors);
 
+router.get('/getListofUsers', userController.getListofUsers);
 
 router.all(
   "/me",checkAuth,
