@@ -1316,31 +1316,31 @@ const sendMessageToUser = async(req, res, next) => {
   }
 
 
-    //get list of Declined trades 
-    const getListofDeclinedTrades = async (req , res ,next) => {
-      let trades
-      try{
-          trades = await Notification.find({ type: "Declined" },{ productID: 1, productsOffered: 1, type: 1 , _id: 0 } )
-          if (!trades || trades.length === 0) {
-            return next(
-              new HttpError('there are no trades with this type', 404)
-            );
-          }
-        
-      }
-      catch(err){
-          const error = new HttpError("can not fetch trades by provided type, something went wrong",500)
-          return next(error)
-      }
+  //get list of Declined trades 
+  const getListofDeclinedTrades = async (req , res ,next) => {
+    let trades
+    try{
+        trades = await Notification.find({ type: "Declined" },{ productID: 1, productsOffered: 1, type: 1 , _id: 0 } )
+        if (!trades || trades.length === 0) {
+          return next(
+            new HttpError('there are no trades with this type', 404)
+          );
+        }
       
-  
-      
-  
-      res.json({ trades : trades })
-  
-  
     }
-  
+    catch(err){
+        const error = new HttpError("can not fetch trades by provided type, something went wrong",500)
+        return next(error)
+    }
+    
+
+    
+
+    res.json({ trades : trades })
+
+
+  }
+
 
     //no of confirmed trades
 const getConfirmedTradesCount = async (req ,res ,next) => {
@@ -1393,6 +1393,37 @@ res.json({ trades : trades})
 
 }
   
+ //send push notification to sendNotificationToSpecficUser
+ const sendNotificationToSpecficUser = async(req , res, next) => {
+
+  const  { msgTitle,msgToUser ,fcmToken , imgUrl}  =  req.body;
+
+    var message = {
+      to: fcmToken,
+        notification: {
+            title: `${msgTitle}`,
+            body: `${msgToUser}`,
+            image: `${imgUrl}`
+
+        },
+        data: {  //you can send only notification or only data(or include both)
+          my_key: 'my value',
+          my_another_key: 'my another value'
+      }
+
+    };
+    await fcm.send(message, function(err, response){
+        if (err) {
+          console.log(err)
+          res.json({message : response})
+        } else {
+            res.json({message : response})
+        }
+      })
+  
+
+ }
+
 
 //exports.sendTradeRequest = sendTradeRequest;
 exports.acceptTrade = acceptTrade;
@@ -1409,3 +1440,5 @@ exports.getListofTrades = getListofTrades;
 exports.getConfirmedTradesCount = getConfirmedTradesCount;
 exports.GetDeclinedTradesCount = GetDeclinedTradesCount;
 exports.GettradeRequestTradesCount = GettradeRequestTradesCount;
+
+exports.sendNotificationToSpecficUser = sendNotificationToSpecficUser;
