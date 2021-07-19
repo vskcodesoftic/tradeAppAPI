@@ -13,7 +13,7 @@ const nodemailer = require("nodemailer");
 //     };
 //     await sgMail.send(msg);
 //     console.log(`Mail Has Been Sent To ${to}`)
-//     return true;
+//     return false;
 //   } catch (e) {
 //     console.error('Mail Service Error => ', e);
 //     return false;
@@ -34,8 +34,8 @@ const sendEmail = async (to, html) => {
     tls: {
       rejectUnauthorized: false
   }
-  // logger: true,
-  // debug: true,
+  // logger: false,
+  // debug: false,
   });
 
   // verify connection configuration

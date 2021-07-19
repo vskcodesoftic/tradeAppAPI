@@ -56,7 +56,7 @@ router.post('/otpVerify',userController.otpVerify);
 //post product
 router.post('/postItem', checkAuth , multiFileUpload.fields([{
   name: 'image', maxCount: 1
-},{  name: 'imgOptOne', maxCount: 1
+},{  name: 'imgOptOne', maxCount: 6
 }]),
 userController.createProduct);
 
