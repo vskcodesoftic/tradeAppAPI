@@ -110,15 +110,6 @@ res.json({ products : productsupdated.map( product => product.toObject({ getters
 }
 
 
-
-
-
-
-
-
-
-
-
 //get list of  products by category
 const getProductsListbyCategory = async (req, res, next) => {
   let getCategory = req.params.cid;
@@ -283,8 +274,6 @@ const deleteProduct = async (req, res, next) => {
 
   };
   
-  
-//getAllProducts
 
 //get list of featured products 
 const getAllProductsList = async (req, res, next) => {

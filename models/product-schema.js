@@ -11,7 +11,7 @@ const productSchema = new Schema({
     image : { type :String },
     category : {type : String , required : true},
     recommendCategory: {type : String , required : true},
-    recommendSubcategory : {type : String , required : true},
+    recommendSubcategory : [{type : String , required : true}],
     quantity : { type : Number },
     subcategory : { type : String },
     productid :{ type: String},

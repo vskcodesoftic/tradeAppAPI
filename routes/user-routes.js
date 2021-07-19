@@ -53,7 +53,7 @@ router.post('/newPassword',userController.newPassword);
 router.post('/otpVerify',userController.otpVerify);
 
 
-//post product
+//post products
 router.post('/postItem', checkAuth , multiFileUpload.fields([{
   name: 'image', maxCount: 1
 },{  name: 'imgOptOne', maxCount: 6

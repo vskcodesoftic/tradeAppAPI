@@ -531,6 +531,7 @@ const createProduct = async (req, res, next) => {
    let SingleFilePath 
    let imgPath ;
 
+   
    if(files){
   
     files.forEach(img => {
@@ -565,6 +566,12 @@ const createProduct = async (req, res, next) => {
   
      const creator = req.userData.userId;
 
+
+   let RecommendSubs = []
+   RecommendSubs = recommendSubcategory.split(',')
+   console.log(RecommendSubs)
+
+
     let user;
     try {
         user = await User.findById(creator);
@@ -593,7 +600,7 @@ const createProduct = async (req, res, next) => {
     category,
     subcategory,
     recommendCategory,
-    recommendSubcategory,
+    recommendSubcategory: RecommendSubs,
     image:SingleFilePath,
     imgOptOne :finalImages,
     creator,
@@ -716,7 +723,6 @@ const createProduct = async (req, res, next) => {
   
 
 //get product by id
-
 const getProductById = async (req, res, next) => {
     const productId = req.params.pid;
   
@@ -952,26 +958,25 @@ res.json({ users : users})
 
 }
 
-    //no of vendors count
-    const getVendorsCount = async (req ,res ,next) => {
+//no of vendors count
+const getVendorsCount = async (req ,res ,next) => {
 
 
-      let vendors
-    try{
-        vendors = await User.find({userType : "Vendor" }).countDocuments()
-    }
-    catch(err){
-        const error = new HttpError("can not fetch vendors request",500)
-        return next(error)
-    }
-    res.json({ vendors : vendors})
-    
-    
-    }
+  let vendors
+try{
+    vendors = await User.find({userType : "Vendor" }).countDocuments()
+}
+catch(err){
+    const error = new HttpError("can not fetch vendors request",500)
+    return next(error)
+}
+res.json({ vendors : vendors})
 
 
+}
 
-    //create contact us
+
+//create contact us
 
 const ContactUs = async (req, res, next) => {
   const errors = validationResult(req);
@@ -1040,7 +1045,6 @@ catch(err){
   res.json({ contactUs : ticket})
   }
   
-
 
 
 //user signup

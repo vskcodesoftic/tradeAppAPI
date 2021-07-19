@@ -1453,9 +1453,7 @@ exports.rejectTradeRequest = rejectTradeRequest;
 exports.sendMessageToUser = sendMessageToUser;
 
 exports.getAllMesageBasedOnRoomId = getAllMesageBasedOnRoomId;
-
 exports.getListofTrades = getListofTrades;
-
 exports.getConfirmedTradesCount = getConfirmedTradesCount;
 exports.GetDeclinedTradesCount = GetDeclinedTradesCount;
 exports.GettradeRequestTradesCount = GettradeRequestTradesCount;
