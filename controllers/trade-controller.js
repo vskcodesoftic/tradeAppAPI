@@ -1396,27 +1396,46 @@ res.json({ trades : trades})
  //send push notification to sendNotificationToSpecficUser
  const sendNotificationToSpecficUser = async(req , res, next) => {
 
-  const  { msgTitle,msgToUser ,fcmToken , imgUrl}  =  req.body;
+  const  { msgTitle,msgToUser ,fcmToken ,UserEmail, imgUrl}  =  req.body;
 
+  let user;
+
+try{
+  user = await User.find({email : `${UserEmail}` });
+}
+
+catch(err){
+    const error = new HttpError("can not fetch user request",500)
+    return next(error)
+}
+
+if(!user){
+  const error = new HttpError("user not found",404)
+  return next(error)
+}
+
+let userFcmToken;
+user.map((usr,i) => (
+  
+    userFcmToken = usr.fcmToken
+  
+))
     var message = {
-      to: fcmToken,
+      to: userFcmToken,
         notification: {
             title: `${msgTitle}`,
             body: `${msgToUser}`,
             image: `${imgUrl}`
 
-        },
-        data: {  //you can send only notification or only data(or include both)
-          my_key: 'my value',
-          my_another_key: 'my another value'
-      }
-
+        }
+  
     };
     await fcm.send(message, function(err, response){
         if (err) {
           console.log(err)
           res.json({message : response})
         } else {
+            console.log("sent")
             res.json({message : response})
         }
       })
