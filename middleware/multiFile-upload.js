@@ -11,21 +11,29 @@ const MIME_TYPE_MAP = {
 };
 const multiFileUpload = multer({
     limits: 500000,
-    storage : multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/assets/images');
-  },
-  filename: (req, file, cb) => {
-    const ext = MIME_TYPE_MAP[file.mimetype];
-    cb(null, uuid() + '.' + ext);
-  },
-  fileFilter: (req, file, cb) => {
-    const isValid = !!MIME_TYPE_MAP[file.mimetype];
-    let error = isValid ? null : new Error('Invalid mime type!');
-    cb(error, isValid);
-  }
+     storage : multer.diskStorage({
+      destination: (req, file, cb)=>{
+          if(file.fieldname==="image")
+          {
+            cb(null, 'public/assets/images');
+          }
+         else if(file.fieldname==="imgOptOne")
+         {
+          cb(null, 'public/assets/images');
+        }
+     
+      },
+      filename:(req,file,cb)=>{
+          if(file.fieldname==="image"){
+              cb(null, file.fieldname+Date.now()+path.extname(file.originalname));
+          }
+        else if(file.fieldname==="imgOptOne"){
+          cb(null, file.fieldname+Date.now()+path.extname(file.originalname));
+        }
+
+      }
+  })
 })
-});
 
 
 module.exports = multiFileUpload;

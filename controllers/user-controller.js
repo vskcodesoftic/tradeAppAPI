@@ -524,20 +524,35 @@ const newPassword = async(req,res)=>{
 const createProduct = async (req, res, next) => {
     const errors = validationResult(req);
 
-   const files = req.files;
+   const files = req.files.imgOptOne;
+   const fileSingle = req.files.image;
+
    let finalImages = []
+   let SingleFilePath 
    let imgPath ;
 
-   if(!files){
-    const error = new Error("please choose files");
+   if(files){
+  
+    files.forEach(img => {
+      console.log(img.path)
+       imgPath = img.path;
+      finalImages.push(imgPath)
+    })
+  }
+
+  if(!fileSingle){
+    const error = new Error("please single choose files");
     return next(error)
   }
   
-  files.forEach(img => {
+  fileSingle.forEach(img => {
     console.log(img.path)
      imgPath = img.path;
-    finalImages.push(imgPath)
+     SingleFilePath = imgPath
   })
+
+
+
 
     if (!errors.isEmpty()) {
 
@@ -579,7 +594,7 @@ const createProduct = async (req, res, next) => {
     subcategory,
     recommendCategory,
     recommendSubcategory,
-    image:finalImages[0],
+    image:SingleFilePath,
     imgOptOne :finalImages,
     creator,
     isFeatured,
