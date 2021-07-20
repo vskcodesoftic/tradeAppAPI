@@ -6,7 +6,7 @@ var fs = require('fs');
  // environment: development, staging, production
  const environment = process.env.NODE_ENV;
  
-//ejs
+//ejs template
 const ejs = require('ejs');
 
 const https = require('https');
