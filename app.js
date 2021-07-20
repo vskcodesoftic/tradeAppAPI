@@ -1,5 +1,6 @@
 const dotenv = require("dotenv").config()
 require("dotenv").config()
+var fs = require('fs');
 
 //dotenv for envoirment variables
  // environment: development, staging, production
@@ -8,7 +9,12 @@ require("dotenv").config()
 //ejs
 const ejs = require('ejs');
 
-const http = require('http');
+const https = require('https');
+
+var privateKey  = fs.readFileSync('./public/sslcret/server.key', 'utf8');
+var certificate = fs.readFileSync('./public/sslcret/server.crt', 'utf8');
+
+var credentials = {key: privateKey, cert: certificate};
 
 const socket = require('socket.io');
 
@@ -41,7 +47,7 @@ const tradePageRoutes = require('./routes/trade-routes');
 const app = express();
 
 //allowing crross server from client side
-const server = http.createServer(app);
+const server = https.createServer(credentials,app);
 const io = socket(server , {
   cors: {
     origin: '*',

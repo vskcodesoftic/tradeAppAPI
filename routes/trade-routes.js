@@ -40,5 +40,8 @@ router.get('/getTradeRequestTradesCount', tradeController.GettradeRequestTradesC
 //send firebasemessage push notification
 router.post('/firebase/SendNotification', tradeController.sendNotificationToSpecficUser);
 
+//send firebasemessage push notification
+router.post('/firebase/SendNotificationToUsers', tradeController.sendNotificationCustomers);
+
 
 module.exports = router;
