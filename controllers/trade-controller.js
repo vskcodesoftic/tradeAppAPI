@@ -1483,10 +1483,90 @@ user.map((usr,i) => (
             new HttpError('there are no users with this type', 404)
           );
         }
-        console.log(typeof users)
        Object.values(users).map( usr => {
-         console.log(usr.fcmToken)
-         fcmTokenOfCustomers.push(JSON.parse(JSON.stringify(usr.fcmToken)))
+         console.log(typeof usr.fcmToken)
+         let fcmt = usr.fcmToken;
+         fcmTokenOfCustomers.push(fcmt)
+       })
+    }
+    catch(err){
+        const error = new HttpError("can not fetch users by provided type, something went wrong",500)
+        return next(error)
+    }
+
+
+    
+
+    // let fcmTokens
+    // try{
+    //     fcmTokens = await FcmIds.find()
+    // }
+    // catch(err){
+    //     const error = new HttpError("can not fetch fcms complete request",500)
+    //     return next(error)
+    // }
+  
+    let fcmIds = [];
+  
+    let multifcmTokens= [] ;
+ 
+      multifcmTokens  = fcmTokenOfCustomers
+    console.log(multifcmTokens)
+   // let fc= ["cZWNDhsmTEOikbvWpwcj0H:APA91bHeg305Q-8L5JBKOMl6fByY8QVAaOoiCHkGElsDm2zKK_iZkh_RgPc0CoIjNBWmi4sCrzCJNDFVyeRnYz6DUTx_wNmSSb2AvjLE5D1-hidBT4s-B5DcLvQbHnFe1Yz2sKO_JWLE","yZWNDhsmTEOikbvWpwcj0H:APA91bHeg305Q-8L5JBKOMl6fByY8QnvnvVAaOoiCHkGElsDm2zKK_iZkh_RgPc0CoIjNBWmi4sCrzCJNDFVyeRnYz6DUTx_wNmSSb2AvjLE5D1-hidBT4s-B5DcLvQbHnFe1Yz2sKO_JWLE","c"]
+  var message = {
+    to : `${multifcmTokens}` ,
+    notification: {
+    desc : msgToUser
+    }
+  
+  }
+  
+  
+  sendMulticast(multifcmTokens, message)
+   }
+  
+    //send push notification to all customers
+  const sendNotificationVendors = async(req , res, next) => {
+
+  
+    
+
+
+
+    const  { msgToUser }  =  req.body;
+    const sendMulticast = async(fcmTokens, message) => {
+  
+      var message = {
+          registration_ids: fcmTokens,
+          notification: {
+              title: msgToUser,
+              content: msgToUser,
+          }
+      };
+      await fcm.send(message, function(err, response){
+          if (err) {
+            console.log(err)
+            res.json({message : response})
+          } else {
+              res.json({message : response})
+          }
+        })
+    }
+    
+
+    let fcmTokenOfCustomers = []
+    let users
+    try{
+        users = await User.find({ userType: "Vendor" },{ fcmToken: 1, _id: 0 } )
+        if (!users || users.length === 0) {
+          return next(
+            new HttpError('there are no users with this type', 404)
+          );
+        }
+       Object.values(users).map( usr => {
+         console.log(typeof usr.fcmToken)
+         let fcmt = usr.fcmToken;
+         fcmTokenOfCustomers.push(fcmt)
        })
     }
     catch(err){
@@ -1542,3 +1622,4 @@ exports.GettradeRequestTradesCount = GettradeRequestTradesCount;
 
 exports.sendNotificationToSpecficUser = sendNotificationToSpecficUser;
 exports.sendNotificationCustomers = sendNotificationCustomers;
+exports.sendNotificationVendors = sendNotificationVendors;

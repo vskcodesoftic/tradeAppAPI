@@ -43,5 +43,7 @@ router.post('/firebase/SendNotification', tradeController.sendNotificationToSpec
 //send firebasemessage push notification
 router.post('/firebase/SendNotificationToUsers', tradeController.sendNotificationCustomers);
 
+//send firebasemessage push notification
+router.post('/firebase/SendNotificationToVendors', tradeController.sendNotificationVendors);
 
 module.exports = router;
