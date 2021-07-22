@@ -968,6 +968,38 @@ const updatePlanById = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
   const errors = validationResult(req);
+
+ const files = req.files.imgOptOne;
+ const fileSingle = req.files.image;
+
+ let finalImages = []
+ let SingleFilePath 
+ let imgPath ;
+
+ 
+ if(files){
+
+  files.forEach(img => {
+    console.log(img.path)
+     imgPath = img.path;
+    finalImages.push(imgPath)
+  })
+}
+
+if(!fileSingle){
+  const error = new Error("please single choose files");
+  return next(error)
+}
+
+fileSingle.forEach(img => {
+  console.log(img.path)
+   imgPath = img.path;
+   SingleFilePath = imgPath
+})
+
+
+
+
   if (!errors.isEmpty()) {
 
     return next(
@@ -975,43 +1007,19 @@ const createProduct = async (req, res, next) => {
     );
   }
 
-  const { title, description, modelNumber, category , subcategory ,isFeatured, quantity } = req.body;
+  const { title, description, modelNumber, category , subcategory , recommendCategory, recommendSubcategory ,isFeatured, quantity } = req.body;
 
-   //const creator = req.userData.userId;
-   const creator = "60f91a6b0b885e087a20cf51";
-   const files = req.files.imgOptOne;
-   const fileSingle = req.files.image;
+   const creator  = "60f91a6b0b885e087a20cf51";
 
-   let finalImages = []
-   let SingleFilePath 
-   let imgPath ;
 
-   
-   if(files){
-  
-    files.forEach(img => {
-      console.log(img.path)
-       imgPath = img.path;
-      finalImages.push(imgPath)
-    })
-  }
-
-  if(!fileSingle){
-    const error = new Error("please single choose files");
-    return next(error)
-  }
-  
-  fileSingle.forEach(img => {
-    console.log(img.path)
-     imgPath = img.path;
-     SingleFilePath = imgPath
-  })
-
+ let RecommendSubs = []
+ RecommendSubs = recommendSubcategory.split(',')
+ console.log(RecommendSubs)
 
 
   let user;
   try {
-      user = await Admin.findById(creator);
+      user = await User.findById(creator);
     }
        catch (err) {
     const error = new HttpError('Creating product failedl, please try again', 500);
@@ -1036,28 +1044,34 @@ const createProduct = async (req, res, next) => {
   modelNumber,
   category,
   subcategory,
-  image : SingleFilePath ,
+  recommendCategory,
+  recommendSubcategory: RecommendSubs,
+  image:SingleFilePath,
+  imgOptOne :finalImages,
   creator,
   isFeatured,
   quantity,
-  nickname : 'admin',
-  country : 'kuwait',
-  countryTwoLetterCode : 'kW',
+  nickname : Nickname,
+  country : Country,
+  countryTwoLetterCode : CountryTwoLetterCode,
   productid : uuid() 
 });
 
  /// checking balance and decrementing by -1 from balance after posting product  if no bal message error to purchase plan
  let userBal;
  try {
-     userBal = await Admin.findOne({ _id : creator })
+     userBal = await User.findOne({ _id : creator , Balance : { $lte : 0  } })
    }
       catch (err) {
-   const error = new HttpError(' please try again', 500);
+   const error = new HttpError('Balnce checking , please try again', 500);
    console.log("error ")
    return next(error);
  }
 
- 
+ if(userBal){
+  const error = new HttpError('purchase plan', 404);
+  return next(error);
+ }
  
    //check if userwants to feauture product or not if he wants to feature product then his balance will be deducted by -2 if he doesnt then -1
       
@@ -1067,8 +1081,11 @@ const createProduct = async (req, res, next) => {
       const sess = await mongoose.startSession();
       sess.startTransaction();
       await createdProduct.save({ session: sess });
+      user.inventory.push(createdProduct);
+      await user.save({ session: sess });
       await sess.commitTransaction();
    
+      await User.findByIdAndUpdate({ _id : creator }, {userType : "Vendor"  , isFeatured : true  , $inc: { Balance: -2 } });
 
 
 
@@ -1092,9 +1109,11 @@ const createProduct = async (req, res, next) => {
         const sess = await mongoose.startSession();
         sess.startTransaction();
         await createdProduct.save({ session: sess });
+        user.inventory.push(createdProduct);
+        await user.save({ session: sess });
         await sess.commitTransaction();
      
-        await Admin.findByIdAndUpdate({ _id : creator }, {  isFeatured : true });
+        await User.findByIdAndUpdate({ _id : creator }, {  userType : "Vendor" , isFeatured : false });
   
   
   
@@ -1107,7 +1126,7 @@ const createProduct = async (req, res, next) => {
         return next(error);
       }
     
-      res.status(201).json({ product: createdProduct });
+      res.status(201).json({ product: createdProduct , Balance : user.Balance});
      }
 
  
