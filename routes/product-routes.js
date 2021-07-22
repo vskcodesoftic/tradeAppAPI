@@ -9,10 +9,22 @@ const checkAuth = require('../middleware/authService');
 
 const hookFileUpload = require('../middleware/hook-file');
 
+const multiFileUpload = require('../middleware/multiFile-upload');
+
 router.get('/', (req, res, next) => {
  
   res.json({message: 'productPage routes'});
 });
+
+
+//updateproduct by id
+router.patch(
+  '/:pid', multiFileUpload.fields([{
+    name: 'image', maxCount: 1
+  },{  name: 'imgOptOne', maxCount: 6
+  }]),
+  productController.updateProduct
+);
 
  //get list of products
  router.get('/list', productController.getProductsList);
@@ -28,11 +40,7 @@ router.get('/uid', checkAuth,  productController.getProductsByUserId);
 
 //getproductsby id
 router.get('/p/:pid', productController.getProductById);
-//updateproduct by id
-router.patch(
-    '/:pid', hookFileUpload.single('image'),
-    productController.updateProduct
-  );
+
 
 //delete product by id
   router.delete('/:pid', productController.deleteProduct);

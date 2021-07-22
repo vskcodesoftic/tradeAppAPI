@@ -217,9 +217,14 @@ const getProductById = async (req, res, next) => {
       );
     }
   
-    const { title, description , category, subcategory, status, isFeatured, quantity } = req.body;
+    const { title, description , category, subcategory, recommendCategory,recommendSubcategory, status, isFeatured, quantity } = req.body;
     const productId = req.params.pid;
   
+    let RecommendSubs = []
+    RecommendSubs = recommendSubcategory.split(',')
+
+   
+
     let product;
     try {
       product = await Product.findById(productId);
@@ -231,14 +236,50 @@ const getProductById = async (req, res, next) => {
       return next(error);
     }
   
+   
+  
+    const files = req.files.imgOptOne;
+    const fileSingle = req.files.image;
+ 
+    let finalImages = []
+    let SingleFilePath 
+    let imgPath ;
+ 
+    
+    if(files){
+   
+     files.forEach(img => {
+       console.log(img.path)
+        imgPath = img.path;
+       finalImages.push(imgPath)
+     })
+   }
+ 
+   if(!fileSingle){
+     const error = new Error("please single choose files");
+     return next(error)
+   }
+   
+   fileSingle.forEach(img => {
+     console.log(img.path)
+      imgPath = img.path;
+      SingleFilePath = imgPath
+   })
+ 
+ 
+
+
     product.title = title;
     product.description = description;
-    product.image = req.file.path;
+    product.image = SingleFilePath;
+    product.imgOptOne  = finalImages;
     product.status = status;
     product.isFeatured = isFeatured;
     product.quantity = quantity;
     product.category = category;
     product.subcategory = subcategory;
+    product.recommendCategory = recommendCategory;
+    product.recommendSubcategory = RecommendSubs;
 
     try {
       await product.save();
