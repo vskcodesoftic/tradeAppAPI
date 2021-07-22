@@ -975,9 +975,39 @@ const createProduct = async (req, res, next) => {
     );
   }
 
-  const { title, description, modelNumber, category , subcategory ,isFeatured, quantity ,creator} = req.body;
+  const { title, description, modelNumber, category , subcategory ,isFeatured, quantity } = req.body;
 
    //const creator = req.userData.userId;
+   const creator = "60f91a6b0b885e087a20cf51";
+   const files = req.files.imgOptOne;
+   const fileSingle = req.files.image;
+
+   let finalImages = []
+   let SingleFilePath 
+   let imgPath ;
+
+   
+   if(files){
+  
+    files.forEach(img => {
+      console.log(img.path)
+       imgPath = img.path;
+      finalImages.push(imgPath)
+    })
+  }
+
+  if(!fileSingle){
+    const error = new Error("please single choose files");
+    return next(error)
+  }
+  
+  fileSingle.forEach(img => {
+    console.log(img.path)
+     imgPath = img.path;
+     SingleFilePath = imgPath
+  })
+
+
 
   let user;
   try {
@@ -1006,7 +1036,7 @@ const createProduct = async (req, res, next) => {
   modelNumber,
   category,
   subcategory,
-  image : req.file.path ,
+  image : SingleFilePath ,
   creator,
   isFeatured,
   quantity,

@@ -14,6 +14,7 @@ const hookFileUpload = require('../middleware/hook-file');
 
 const checkAuth = require('../middleware/authService');
 
+const multiFileUpload = require('../middleware/multiFile-upload');
 
 
 
@@ -147,7 +148,10 @@ router.patch(
 router.delete('/users/:uid', adminController.deleteUserById);
 
 
-router.post('/postItem' ,hookFileUpload.single('image'),
+router.post('/postItem' , multiFileUpload.fields([{
+  name: 'image', maxCount: 1
+},{  name: 'imgOptOne', maxCount: 6
+}]),
 adminController.createProduct);
 
 module.exports = router;
