@@ -223,7 +223,15 @@ const getProductById = async (req, res, next) => {
     let RecommendSubs = []
     RecommendSubs = recommendSubcategory.split(',')
 
-   
+    //holder for optional images
+   let imgoptArr =[]
+    
+   // holder for single image
+   let  imgOne;
+
+   let finalImages = []
+   let SingleFilePath 
+   let imgPath ;
 
     let product;
     try {
@@ -235,15 +243,25 @@ const getProductById = async (req, res, next) => {
       );
       return next(error);
     }
-  
-   
+    
+
+    //accesing array of previous images
+    imgoptArr = product.imgOptOne;
+    //accesing single image 
+    imgOne = product.image;
+
   
     const files = req.files.imgOptOne;
     const fileSingle = req.files.image;
- 
-    let finalImages = []
-    let SingleFilePath 
-    let imgPath ;
+   
+
+   if(!files){
+     
+    finalImages = imgoptArr;
+    console.log("optional images :",finalImages)
+    
+   }
+
  
     
     if(files){
@@ -256,16 +274,16 @@ const getProductById = async (req, res, next) => {
    }
  
    if(!fileSingle){
-     const error = new Error("please single choose files");
-     return next(error)
+    SingleFilePath =imgOne;
    }
    
+   if(fileSingle){
    fileSingle.forEach(img => {
      console.log(img.path)
       imgPath = img.path;
       SingleFilePath = imgPath
    })
- 
+  }
  
 
 
