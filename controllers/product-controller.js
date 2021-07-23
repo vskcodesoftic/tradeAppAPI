@@ -112,10 +112,10 @@ res.json({ products : productsupdated.map( product => product.toObject({ getters
 
 //get list of  products by category
 const getProductsListbyCategory = async (req, res, next) => {
-  let getCategory = req.params.cid;
+  let getCategoryId = req.params.cid;
   let products
   try{
-      products = await Product.find({ category : getCategory })
+      products = await Product.find({ categoryId : getCategoryId })
       if (!products || products.length === 0) {
         return next(
           new HttpError('there are no products with this category', 404)

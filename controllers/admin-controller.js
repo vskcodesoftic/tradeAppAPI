@@ -633,8 +633,10 @@ const addCategory = async(req, res, next) => {
    console.log(subs)
 
   const createdCategory = new Category({
+     categoryId: uuid(),
      category,
      subcategory:subs
+     
   });
 
  

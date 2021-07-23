@@ -553,8 +553,6 @@ const createProduct = async (req, res, next) => {
   })
 
 
-
-
     if (!errors.isEmpty()) {
 
       return next(
@@ -562,7 +560,7 @@ const createProduct = async (req, res, next) => {
       );
     }
   
-    const { title, description, modelNumber, category , subcategory , recommendCategory, recommendSubcategory ,isFeatured, quantity } = req.body;
+    const { title, description, modelNumber, category , subcategory , recommendCategory, recommendSubcategory ,isFeatured, quantity , categoryId } = req.body;
   
      const creator = req.userData.userId;
 
@@ -597,6 +595,7 @@ const createProduct = async (req, res, next) => {
     title,
     description,
     modelNumber,
+    categoryId ,
     category,
     subcategory,
     recommendCategory,
