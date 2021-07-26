@@ -811,6 +811,8 @@ const getNotificationsByUserID = async (req ,res ,next ) => {
     );
     return next(error);
   }
+
+
   // if (!products || products.length === 0) {
   if (!userWithNotifications || userWithNotifications.notifications.length === 0) {
     return next(
@@ -818,11 +820,23 @@ const getNotificationsByUserID = async (req ,res ,next ) => {
     );
   }
 
+
+  let userWithNotificationsCount;
+  try {
+    userWithNotificationsCount = await User.findById(user).populate('notifications').countDocuments();
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching notifications count failed, please try again later',
+      500
+    );
+    return next(error);
+  }
+
   res.json({
     notifications: userWithNotifications.notifications.map(notification =>
       notification.toObject({ getters: true })
     )
-  });
+  , count :userWithNotificationsCount });
 
 
 }

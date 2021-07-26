@@ -18,7 +18,6 @@ const getProductsList = async (req, res, next) => {
 
 //checking products expiry
 
-
 // the products which are featured but expired 15days since accpetance of trade  we are resttting isShow to true andd token to current date
 
   let product
@@ -110,6 +109,7 @@ res.json({ products : productsupdated.map( product => product.toObject({ getters
 }
 
 
+
 //get list of  products by category
 const getProductsListbyCategory = async (req, res, next) => {
   let getCategoryId = req.params.cid;
@@ -131,6 +131,8 @@ const getProductsListbyCategory = async (req, res, next) => {
   res.json({ products : products.map( product => product.toObject({ getters : true}))})
   
 }
+
+
 
 //get list of featured products 
 const getFeaturedProductsList = async (req, res, next) => {

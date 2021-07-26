@@ -29,7 +29,7 @@ const userSchema = new Schema({
     isSubscribed : { type: Boolean, default: false },
     isFreePlan :  { type: Boolean, default: false },
     isVerified : { type: Boolean, default: false },
-    Balance : {type :Number , default : "0"},
+    Balance : {type :Number , default : "1"},
     planexpireToken:{ type:Date },
     otpHex: { type: String },
     userType : { type : String, default : "Customer"}
