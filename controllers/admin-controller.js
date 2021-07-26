@@ -1009,7 +1009,7 @@ fileSingle.forEach(img => {
     );
   }
 
-  const { title, description, modelNumber, category , subcategory , recommendCategory, recommendSubcategory ,isFeatured, quantity } = req.body;
+  const { title, description, modelNumber, category , subcategory , recommendCategory, recommendSubcategory ,isFeatured, quantity , status} = req.body;
 
    const creator  = "60f91a6b0b885e087a20cf51";
 
@@ -1053,27 +1053,14 @@ fileSingle.forEach(img => {
   creator,
   isFeatured,
   quantity,
+  status,
   nickname : Nickname,
   country : Country,
   countryTwoLetterCode : CountryTwoLetterCode,
   productid : uuid() 
 });
 
- /// checking balance and decrementing by -1 from balance after posting product  if no bal message error to purchase plan
- let userBal;
- try {
-     userBal = await User.findOne({ _id : creator , Balance : { $lte : 0  } })
-   }
-      catch (err) {
-   const error = new HttpError('Balnce checking , please try again', 500);
-   console.log("error ")
-   return next(error);
- }
 
- if(userBal){
-  const error = new HttpError('purchase plan', 404);
-  return next(error);
- }
  
    //check if userwants to feauture product or not if he wants to feature product then his balance will be deducted by -2 if he doesnt then -1
       
@@ -1087,7 +1074,7 @@ fileSingle.forEach(img => {
       await user.save({ session: sess });
       await sess.commitTransaction();
    
-      await User.findByIdAndUpdate({ _id : creator }, {userType : "Vendor"  , isFeatured : true  , $inc: { Balance: -2 } });
+      await User.findByIdAndUpdate({ _id : creator }, { userType : "Vendor"  , isFeatured : true });
 
 
 
@@ -1128,7 +1115,7 @@ fileSingle.forEach(img => {
         return next(error);
       }
     
-      res.status(201).json({ product: createdProduct , Balance : user.Balance});
+      res.status(201).json({ product: createdProduct });
      }
 
  
@@ -1144,7 +1131,7 @@ const CategoryList = async (req, res , next) => {
 
  let categories;
  try {
-  categories = await Category.find({}, 'category');
+  categories = await Category.find({} ,{ category: 1, categoryId: 1 });
    }
       catch (err) {
    const error = new HttpError('fetching failed, please try again', 500);
@@ -1176,7 +1163,7 @@ const SubCategoryList = async (req, res , next) => {
 
  let Subcategories;
  try {
-  Subcategories = await Category.find({ category : `${Cid}` },'subcategory');
+  Subcategories = await Category.find({ category : `${Cid}` },{subcategory:1,categoryId:1});
    }
 
       catch (err) {
@@ -1196,6 +1183,10 @@ SubcategoriesArray.push(Subcategories)
  res.status(200).json({ SubCategories:  SubcategoriesArray});
 
 }
+
+
+
+
 
 
 

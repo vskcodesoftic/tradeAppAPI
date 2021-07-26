@@ -62,6 +62,7 @@ router.get('/getCats', adminController.CategoryList)
 //getSubCategories
 router.get('/getSubs',adminController.SubCategoryList)
 
+
 //postAdvertisementImages
 router.post('/adds/addImages', fileUpload.single('image'), adminController.postAdvertisementImages);
 
