@@ -7,8 +7,8 @@ const mongoose = require('mongoose');
 
 let geoip = require('geoip-lite');
 
-const {  sendEmail  ,sendEmailOtpLink  , sendEmailLink } = require('../services/mail.service');
-const {forgetHTML , signupHTML, loginMailHTML } = require('../tempalates/signUpHtml');
+const {  sendEmail  ,sendEmailOtpLink  , sendEmailLink , sendEmailContactUs} = require('../services/mail.service');
+const {forgetHTML , signupHTML, loginMailHTML, contactMailHTML } = require('../tempalates/signUpHtml');
 
 const {generateOTP} = require('../util/genarateOtp');
 
@@ -1032,7 +1032,25 @@ const ContactUs = async (req, res, next) => {
       return next(error);
     }
 
-   
+  
+  let html;
+  try {
+    html = contactMailHTML( 
+       Name,
+      Number,
+      Email,
+      Subject,
+      Message
+      );
+    
+      let email ="care@badilnyint.com"
+    await sendEmailContactUs(html);
+  }
+  catch(err){
+    const error = new HttpError("could not send mail",500);
+    return next(error)
+  }
+
   res.status(201).json({ contactUs : createdTicket })
 }
 

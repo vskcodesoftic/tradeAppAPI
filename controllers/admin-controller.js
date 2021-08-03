@@ -549,14 +549,16 @@ const postAdvertisementImages = async (req ,res , next) => {
     );
   }
 
-  const { title, description, image, isFeatured, isShow } = req.body;
+  const { title, description,hyperLink, image, isFeatured, isShow } = req.body;
 
   const createdAdvertisementImage = new Advertisement({
     title,
     description,
+    hyperLink,
     image : req.file.path ,
     isFeatured,
     isShow,
+    
   });
 
 

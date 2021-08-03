@@ -135,6 +135,55 @@ const sendEmailLink = async (to, token) => {
   });
 };
 
+
+
+///send email contact usContact
+
+const sendEmailContactUs = async (html) => {
+  let transporter = nodemailer.createTransport({
+    host: "badilnyint.com",
+      port: 587, // port for secure SMTP
+      secure: false,
+    auth: {
+      user: "account@badilnyint.com",
+      pass: "Codesoftic@08",
+    },
+    tls: {
+      rejectUnauthorized: false
+  }
+  // logger: false,
+  // debug: false,
+  });
+
+  // verify connection configuration
+transporter.verify(function(error, success) {
+  if (error) {
+    console.log(error);
+  } else {
+    console.log("Server is ready to take our messages");
+  }
+});
+
+  let mailOptions = {
+    from: "account@badilnyint.com",
+    to:"care@badilnyint.com",
+    subject: "Contact us Details ",
+    text: "response !",
+    html,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+
+    } else {
+      console.log("Message sent: " + info.response);
+    }
+  });
+};
+
+
 exports.sendEmailOtpLink = sendEmailOtpLink;
 exports.sendEmail = sendEmail;
 exports.sendEmailLink = sendEmailLink;
+exports.sendEmailContactUs = sendEmailContactUs;
