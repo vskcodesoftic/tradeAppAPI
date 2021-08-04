@@ -451,7 +451,7 @@ const updateAdvertisementById = async (req, res, next) => {
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
-  const { title , description } = req.body;
+  const { title , description , hyperLink} = req.body;
   const addId = req.params.bid;
 
   let add;
@@ -468,6 +468,7 @@ const updateAdvertisementById = async (req, res, next) => {
   add.title = title;
   add.description = description;
   add.image = req.file.path;
+  add.hyperLink = hyperLink;
   try {
     await add.save();
   } catch (err) {
